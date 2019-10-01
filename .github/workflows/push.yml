@@ -68,7 +68,7 @@ jobs:
       uses: docker://php:7.3-alpine
       with:
         entrypoint: phpdbg
-        args: -qrr vendor/bin/behat --strict
+        args: -qrr vendor/bin/behat
     - name: Behaviour test coverage
       uses: docker://php:7.3-alpine
       with:
