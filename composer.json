@@ -1,0 +1,62 @@
+{
+    "name": "danskernesdigitalebibliotek/follow-search",
+    "description": "Service allowing users to follow searches. Based on Lumen. Specificed using OpenAPI.",
+    "license": "AGPL",
+    "type": "project",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/reload/oauth2-adgangsplatformen"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/reload/laravel-psr15-bridge"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "danskernesdigitalebibliotek/oauth2-adgangsplatformen": "dev-master",
+        "laravel/lumen-framework": "^6.0",
+        "softonic/laravel-psr15-bridge": "dev-laravel-6"
+    },
+    "require-dev": {
+        "behat/behat": "^3.5",
+        "ddelnano/dredd-hooks-php": "^1.1",
+        "fzaninotto/faker": "^1.4",
+        "guzzlehttp/guzzle": "^6.3",
+        "matthiasnoback/behat-local-code-coverage-extension": "^0.3.0",
+        "mockery/mockery": "^1.0",
+        "phpstan/extension-installer": "^1.0",
+        "phpstan/phpstan": "^0.11.12",
+        "phpstan/phpstan-symfony": "^0.11.6",
+        "phpunit/phpcov": "^5.0",
+        "phpunit/phpunit": "^7.0",
+        "squizlabs/php_codesniffer": "^3.4"
+    },
+    "autoload": {
+        "classmap": [
+            "database/seeds",
+            "database/factories"
+        ],
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/"
+        ]
+    },
+    "scripts": {
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ]
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
