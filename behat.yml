@@ -1,0 +1,12 @@
+default:
+  autoload: [ '%paths.base%/tests/contexts' ]
+  suites:
+    default:
+      paths: [ '%paths.base%/tests/features' ]
+      local_coverage_enabled: true
+      filters:
+      contexts:
+        - FollowSearchContext
+  extensions:
+    BehatLocalCodeCoverage\LocalCodeCoverageExtension:
+      target_directory: '%paths.base%/coverage'
