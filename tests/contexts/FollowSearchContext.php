@@ -121,4 +121,60 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     {
         $this->state['token'] = $this->faker->sha1;
     }
+
+    /**
+     * @Then the system should return success
+     */
+    public function theSystemShouldReturnSuccess()
+    {
+        $this->checkStatusCode([200, 201, 204]);
+    }
+
+    /**
+     * @Then the system should return access denied
+     */
+    public function theSystemShouldReturnAccessDenied()
+    {
+        $this->checkStatusCode(401);
+    }
+
+    /**
+     * @Then the system should return not found
+     */
+    public function theSystemShouldReturnNotFound()
+    {
+        $this->checkStatusCode(404);
+    }
+
+    /**
+     * Check that status code is the expected.
+     */
+    protected function checkStatusCode($expected)
+    {
+        if (!is_array($expected)) {
+            $expected = [$expected];
+        }
+        if (!in_array($this->response->getStatusCode(), $expected)) {
+            throw new Exception('Status code ' . $this->response->getStatusCode() .
+                                ' instead of the expected ' . implode(', ', $expected) .
+                                "\nResponse content: \n" . $this->response->getContent());
+        }
+    }
+
+    /**
+     * @When fetching searches
+     */
+    public function fetchingSearches()
+    {
+        $this->fetchingSearchesNamed('default');
+    }
+
+    /**
+     * @When fetching :list searches
+     */
+    public function fetchingSearchesNamed($list)
+    {
+        $this->state['list'] = $list;
+        $this->get('/searches/' . $list, $this->getHeaders());
+    }
 }
