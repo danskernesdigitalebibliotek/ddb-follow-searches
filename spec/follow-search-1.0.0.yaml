@@ -9,43 +9,49 @@ info:
 tags:
   - name: 'Migrate'
     description: Data migration
-  - name: 'Search'
+  - name: 'Searches'
+    description: Searches handling
 security:
   - BearerAuth: []
 paths:
-  /searches:
+  /searches/{searchesId}:
     get:
       operationId: getSearches
       tags:
         - Search
       description: 'Get list of searches.'
+      parameters:
+        - $ref: '#/components/parameters/searchesId'
       responses:
         200:
-          description: 'The search data is returned.'
+          description: 'The list of searches is returned.'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Searches'
+        404:
+          description: 'Unknown list.'
         default:
           description: 'Unspecified error.'
 
-  /search/{searchId}:
+  /searches/{searchesId}/{searchId}:
     get:
       operationId: checkListMaterial
       tags:
         - List
       description: 'Get the search results for a specific search.'
       parameters:
+        - $ref: '#/components/parameters/searchesId'
         - $ref: '#/components/parameters/searchId'
       responses:
         200:
-          description: 'The search with the specified ID exists.'
+          description: 'The search results.'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SearchResult'
         404:
-          description: 'The search does not exist.'
+          description: 'The search list or search does not exist.'
         default:
           description: 'Unspecified error.'
     put:
@@ -54,10 +60,13 @@ paths:
         - Search
       description: 'Add search to the list.'
       parameters:
+        - $ref: '#/components/parameters/searchesId'
         - $ref: '#/components/parameters/searchId'
       responses:
         201:
           description: 'The search was successfully added to the list.'
+        404:
+          description: 'Unknown search list.'
         default:
           description: 'Unspecified error.'
     delete:
@@ -66,12 +75,13 @@ paths:
         - Search
       description: 'Delete search from list.'
       parameters:
+        - $ref: '#/components/parameters/searchesId'
         - $ref: '#/components/parameters/searchId'
       responses:
         204:
           description: 'Successfully removed.'
         404:
-          description: 'Unknown search.'
+          description: 'Unknown search list or search.'
         default:
           description: 'Unspecified error.'
   /migrate/{legacyUserId}:
@@ -94,6 +104,14 @@ components:
       type: http
       scheme: bearer
   parameters:
+    searchesId:
+      name: 'searchesId'
+      in: 'path'
+      description: 'The identifier of the searches list to return. Use "default" for the default list.'
+      required: true
+      example: 'default'
+      schema:
+        $ref: '#/components/schemas/SearchesId'
     searchId:
       name: 'searchId'
       in: 'path'
@@ -112,6 +130,9 @@ components:
         $ref: '#/components/schemas/LegacyUserId'
 
   schemas:
+    SearchesId:
+      description: 'Searches list identifier. In the initial version, this can only be "default".'
+      type: string
     SearchId:
       description: 'A search string.'
       type: string
