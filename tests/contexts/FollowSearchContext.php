@@ -175,10 +175,13 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     public function fetchingSearchesNamed($list)
     {
         $this->get("/searches/$list", $this->getHeaders())
-        ->seeJsonContains([
+        ->seeJsonEquals([[
             'guid' => $this->state['token'],
             'title' => $list,
-        ]);
+            'search_query' => 'harry potter',
+            'last_seen' => '2019-10-02 10:00:00',
+            'changed_at' => '2019-10-02 10:00:00.000000'
+        ]]);
     }
 
     /**
