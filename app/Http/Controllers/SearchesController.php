@@ -25,8 +25,6 @@ class SearchesController extends Controller
    *
    * @param \Illuminate\Http\Request $request
    *   The illuminate http request object.
-   * @param string $searchQuery
-   *   The actual human readable search query.
    *
    * @return \Illuminate\Http\Response
    *   The illuminate http response object.
@@ -37,8 +35,8 @@ class SearchesController extends Controller
         ->updateOrInsert(
             [
             'guid' => $request->user()->getId(),
-            'search_query' => $request->search_query,
-            'title' => $request->title
+            'search_query' => $request->get('search_query'),
+            'title' => $request->get('title')
             ],
             [
                 // We need to format the date ourselves to add microseconds.
