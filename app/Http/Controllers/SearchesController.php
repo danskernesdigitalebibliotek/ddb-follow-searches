@@ -15,7 +15,9 @@ class SearchesController extends Controller
 {
     public function get(string $listId)
     {
-        return [];
+        $data = DB::table('searches')
+            ->get(['*'])->where('title', '=', $listId);
+        return Response($data);
     }
 
     /**
@@ -29,13 +31,14 @@ class SearchesController extends Controller
    * @return \Illuminate\Http\Response
    *   The illuminate http response object.
    */
-    public function addSearch(Request $request, string $searchQuery)
+    public function addSearch(Request $request)
     {
         DB::table('searches')
         ->updateOrInsert(
             [
             'guid' => $request->user()->getId(),
-            'search_query' => $searchQuery,
+            'search_query' => $request->search_query,
+            'title' => $request->title
             ],
             [
                 // We need to format the date ourselves to add microseconds.

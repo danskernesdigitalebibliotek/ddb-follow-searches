@@ -34,6 +34,23 @@ paths:
         default:
           description: 'Unspecified error.'
 
+  /searches:
+    post:
+      operationId: addSearch
+      tags:
+        - Search
+      description: 'Add search to the list.'
+      parameters:
+        - $ref: '#/components/parameters/searchesIdPost'
+        - $ref: '#/components/parameters/searchIdPost'
+      responses:
+        201:
+          description: 'The search was successfully added to the list.'
+        404:
+          description: 'Unknown search list.'
+        default:
+          description: 'Unspecified error.'
+
   /searches/{searchesId}/{searchId}:
     get:
       operationId: checkListMaterial
@@ -52,21 +69,6 @@ paths:
                 $ref: '#/components/schemas/SearchResult'
         404:
           description: 'The search list or search does not exist.'
-        default:
-          description: 'Unspecified error.'
-    put:
-      operationId: addSearch
-      tags:
-        - Search
-      description: 'Add search to the list.'
-      parameters:
-        - $ref: '#/components/parameters/searchesId'
-        - $ref: '#/components/parameters/searchId'
-      responses:
-        201:
-          description: 'The search was successfully added to the list.'
-        404:
-          description: 'Unknown search list.'
         default:
           description: 'Unspecified error.'
     delete:
@@ -115,6 +117,22 @@ components:
     searchId:
       name: 'searchId'
       in: 'path'
+      description: 'The identifier of the search.'
+      required: true
+      example: 'harry potter'
+      schema:
+        $ref: '#/components/schemas/SearchId'
+    searchesIdPost:
+      name: 'searchesId'
+      in: 'query'
+      description: 'The identifier of the searches list to return. Use "default" for the default list.'
+      required: true
+      example: 'default'
+      schema:
+        $ref: '#/components/schemas/SearchesId'
+    searchIdPost:
+      name: 'searchId'
+      in: 'query'
       description: 'The identifier of the search.'
       required: true
       example: 'harry potter'
