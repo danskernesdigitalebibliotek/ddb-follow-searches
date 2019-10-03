@@ -174,8 +174,11 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
      */
     public function fetchingSearchesNamed($list)
     {
-        $this->state['list'] = $list;
-        $this->get('/searches/' . $list, $this->getHeaders());
+        $this->get("/searches/$list", $this->getHeaders())
+        ->seeJsonContains([
+            'guid' => $this->state['token'],
+            'title' => $list,
+        ]);
     }
 
     /**
@@ -191,6 +194,9 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
      */
     public function searchWithTitleIsAddedToTheList($query, $title)
     {
-        $this->put('/searches/default/' . $title, [], $this->getHeaders());
+        $this->post('/searches', [
+            'title' => $title,
+            'search_query' => $query
+        ], $this->getHeaders());
     }
 }
