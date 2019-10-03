@@ -18,4 +18,5 @@ $router->get('/', function () use ($router) {
 
 $router->group(['middleware' => 'auth'], function ($router) {
     $router->get('/searches/{searchesId}', 'SearchesController@get');
+    $router->put('/searches/default/{searchQuery}', 'SearchesController@addSearch');
 });
