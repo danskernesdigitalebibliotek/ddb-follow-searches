@@ -8,7 +8,7 @@ Feature: Add to searches list
     Then the system should return success
     And fetching the list of searches should return:
       | title  | search       | last_seen        |
-      | Harray | harry potter | 2019-10-02 10:00 |
+      | Harry  | harry potter | 2019-10-02 10:00 |
 
   Scenario: Add material to existing list
     Given a known user
@@ -31,4 +31,4 @@ Feature: Add to searches list
     Then the system should return success
     And fetching the list of searches should return:
       | title  | searches     | last_seen        |
-      | Harray | harry potter | 2019-10-02 10:00 |
+      | Harry | harry potter | 2019-10-02 10:00 |
