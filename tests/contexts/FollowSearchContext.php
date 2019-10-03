@@ -177,4 +177,20 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
         $this->state['list'] = $list;
         $this->get('/searches/' . $list, $this->getHeaders());
     }
+
+    /**
+     * @Given the time is :time
+     */
+    public function theTimeIs($time)
+    {
+        Carbon::setTestNow(Carbon::parse($time));
+    }
+
+    /**
+     * @When search :query with title :title is added to the list
+     */
+    public function searchWithTitleIsAddedToTheList($query, $title)
+    {
+        $this->put('/searches/default/' . $title, [], $this->getHeaders());
+    }
 }
