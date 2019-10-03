@@ -42,8 +42,11 @@ Hooks::beforeAll(function (&$transaction) use ($artisan) {
 Hooks::beforeEach(function ($transaction) {
     $transaction->request->headers->Authorization = 'Bearer test-user';
 
-    // Skip all for now.
+    // Skip all for now except 201.
     $transaction->skip = true;
+    if (preg_match('/(201|HEAD > \d{3})$/', $transaction->name)) {
+        $transaction->skip = false;
+    }
 
     // Skip internal error responses, we can't trigger those and HEAD requests
     // which dredd doesn't support.
