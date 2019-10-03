@@ -16,5 +16,6 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group(['middleware' => 'auth'], function () {
+$router->group(['middleware' => 'auth'], function ($router) {
+    $router->get('/searches/{searchesId}', 'SearchesController@get');
 });
