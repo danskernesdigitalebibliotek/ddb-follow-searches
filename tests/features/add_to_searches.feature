@@ -1,14 +1,14 @@
 Feature: Add to searches list
   Users should be able to add searches to their list.
 
-  Scenario: Add seach to list
+  Scenario: Add search to list
     Given a known user that has no items on list
     And the time is "2019-10-02 10:00"
-    When search "harry potter" with title "Harry" is added to the list
+    When search "harry potter" with title "Harry" is added to the list "default"
     Then the system should return success
-    And fetching the list of searches should return:
-      | title  | search       | last_seen        |
-      | Harry  | harry potter | 2019-10-02 10:00 |
+    When fetching "default" searches
+      | title  | query       | last_seen        |
+      | Harry | harry potter | 2019-10-02 10:00 |
 
   Scenario: Add material to existing list
     Given a known user
@@ -30,5 +30,5 @@ Feature: Add to searches list
     When search "harry potter" with title "Harry" is added to the list
     Then the system should return success
     And fetching the list of searches should return:
-      | title  | searches     | last_seen        |
+      | title  | searches    | last_seen        |
       | Harry | harry potter | 2019-10-02 10:00 |

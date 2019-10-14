@@ -17,5 +17,7 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['middleware' => 'auth'], function ($router) {
-    $router->get('/searches/{searchesId}', 'SearchesController@get');
+    $router->get('/list/{listName}', 'SearchesController@get');
+    $router->get('/list/{listName}/{searchTitle}', 'SearchesController@getSearch');
+    $router->post('/list/{listName}/{searchTitle}', 'SearchesController@addSearch');
 });
