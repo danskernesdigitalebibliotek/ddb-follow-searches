@@ -1,7 +1,7 @@
 FROM php:7.2-alpine
 
 RUN apk add --update --no-cache --virtual .build-deps \
-        nodejs npm
+        nodejs npm bash
 
 RUN npm install dredd --global --unsafe-perm=true
 
