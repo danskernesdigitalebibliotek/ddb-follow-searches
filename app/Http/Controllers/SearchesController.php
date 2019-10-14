@@ -13,10 +13,12 @@ use Laravel\Lumen\Routing\Controller;
  */
 class SearchesController extends Controller
 {
-    public function get(string $listId)
+    public function get(Request $request, string $list)
     {
         $data = DB::table('searches')
-            ->get(['*'])->where('title', '=', $listId);
+            ->where('list', '=', $list)
+            ->get(['list', 'title', 'query', 'last_seen']);
+
         return Response($data);
     }
 
@@ -29,14 +31,15 @@ class SearchesController extends Controller
    * @return \Illuminate\Http\Response
    *   The illuminate http response object.
    */
-    public function addSearch(Request $request)
+    public function addSearch(Request $request, string $list, string $title)
     {
         DB::table('searches')
         ->updateOrInsert(
             [
-            'guid' => $request->user()->getId(),
-            'search_query' => $request->get('search_query'),
-            'title' => $request->get('title')
+                'guid' => $request->user()->getId(),
+                'list' => $list,
+                'title' => $title,
+                'query' => $request->get('query')
             ],
             [
                 // We need to format the date ourselves to add microseconds.

@@ -16,10 +16,11 @@ class CreateSearchesTable extends Migration
         Schema::create('searches', function (Blueprint $table) {
             $table->string('guid');
             $table->string('title');
-            $table->string('search_query', 2048);
+            $table->string('list');
+            $table->string('query', 2048);
             $table->timestamp('last_seen');
             $table->timestamp('changed_at', 6);
-            $table->unique(['guid', 'search_query']);
+            $table->unique(['guid', 'query']);
         });
     }
     /**

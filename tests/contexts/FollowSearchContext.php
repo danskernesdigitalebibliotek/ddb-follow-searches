@@ -174,14 +174,10 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
      */
     public function fetchingSearchesNamed($list)
     {
-        $this->get("/searches/$list", $this->getHeaders())
-        ->seeJsonEquals([[
-            'guid' => $this->state['token'],
-            'title' => $list,
-            'search_query' => 'harry potter',
-            'last_seen' => '2019-10-02 10:00:00',
-            'changed_at' => '2019-10-02 10:00:00.000000'
-        ]]);
+        $this->get("/list/$list", $this->getHeaders())
+        ->seeJsonContains([
+            'list' => $list,
+        ]);
     }
 
     /**
@@ -193,13 +189,12 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @When search :query with title :title is added to the list
+     * @When search :query with title :title is added to the list :list
      */
-    public function searchWithTitleIsAddedToTheList($query, $title)
+    public function searchWithTitleIsAddedToTheSearches($query, $list, $title)
     {
-        $this->post('/searches', [
-            'title' => $title,
-            'search_query' => $query
+        $this->post("/list/$list/$title", [
+            'query' => $query,
         ], $this->getHeaders());
     }
 }

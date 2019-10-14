@@ -7,68 +7,63 @@ info:
     url: 'https://www.gnu.org/licenses/gpl-3.0.html'
 
 tags:
+  - name: 'Search'
   - name: 'Migrate'
     description: Data migration
-  - name: 'Searches'
-    description: Searches handling
 security:
   - BearerAuth: []
 paths:
-  /searches/{searchesId}:
+  /list/{listName}:
     get:
       operationId: getSearches
       tags:
         - Search
-      description: 'Get list of searches.'
+      description: 'Get all the users searches.'
       parameters:
-        - $ref: '#/components/parameters/searchesId'
+        - $ref: '#/components/parameters/listName'
       responses:
         200:
-          description: 'The list of searches is returned.'
+          description: 'The search data is returned.'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Searches'
-        404:
-          description: 'Unknown list.'
         default:
           description: 'Unspecified error.'
 
-  /searches:
-    post:
-      operationId: addSearch
-      tags:
-        - Search
-      description: 'Add search to the list.'
-      parameters:
-        - $ref: '#/components/parameters/searchesIdPost'
-        - $ref: '#/components/parameters/searchIdPost'
-      responses:
-        201:
-          description: 'The search was successfully added to the list.'
-        404:
-          description: 'Unknown search list.'
-        default:
-          description: 'Unspecified error.'
-
-  /searches/{searchesId}/{searchId}:
+  /list/{listName}/{searchTitle}:
     get:
       operationId: checkListMaterial
       tags:
-        - List
+        - Search
       description: 'Get the search results for a specific search.'
       parameters:
-        - $ref: '#/components/parameters/searchesId'
-        - $ref: '#/components/parameters/searchId'
+        - $ref: '#/components/parameters/listName'
+        - $ref: '#/components/parameters/searchTitle'
       responses:
         200:
-          description: 'The search results.'
+          description: 'The search with the specified ID exists.'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SearchResult'
         404:
-          description: 'The search list or search does not exist.'
+          description: 'The search does not exist.'
+        default:
+          description: 'Unspecified error.'
+    post:
+      operationId: addSearch
+      tags:
+        - Search
+      description: 'Add search to the list.'
+      requestBody:
+        $ref: '#/components/requestBodies/query'
+      parameters:
+        - $ref: '#/components/parameters/listName'
+        - $ref: '#/components/parameters/searchTitle'
+      responses:
+        201:
+          description: 'The search was successfully added to the list.'
         default:
           description: 'Unspecified error.'
     delete:
@@ -77,13 +72,13 @@ paths:
         - Search
       description: 'Delete search from list.'
       parameters:
-        - $ref: '#/components/parameters/searchesId'
-        - $ref: '#/components/parameters/searchId'
+        - $ref: '#/components/parameters/listName'
+        - $ref: '#/components/parameters/searchTitle'
       responses:
         204:
           description: 'Successfully removed.'
         404:
-          description: 'Unknown search list or search.'
+          description: 'Unknown search.'
         default:
           description: 'Unspecified error.'
   /migrate/{legacyUserId}:
@@ -106,38 +101,22 @@ components:
       type: http
       scheme: bearer
   parameters:
-    searchesId:
-      name: 'searchesId'
+    listName:
+      name: 'listName'
       in: 'path'
-      description: 'The identifier of the searches list to return. Use "default" for the default list.'
+      description: 'The name of the list containing searches.'
       required: true
-      example: 'default'
+      example: 'Fiction'
       schema:
-        $ref: '#/components/schemas/SearchesId'
-    searchId:
-      name: 'searchId'
+        $ref: '#/components/schemas/Query'
+    searchTitle:
+      name: 'searchTitle'
       in: 'path'
-      description: 'The identifier of the search.'
+      description: 'The title of the search to remove.'
       required: true
-      example: 'harry potter'
+      example: 'Harry Potter'
       schema:
-        $ref: '#/components/schemas/SearchId'
-    searchesIdPost:
-      name: 'searchesId'
-      in: 'query'
-      description: 'The identifier of the searches list to return. Use "default" for the default list.'
-      required: true
-      example: 'default'
-      schema:
-        $ref: '#/components/schemas/SearchesId'
-    searchIdPost:
-      name: 'searchId'
-      in: 'query'
-      description: 'The identifier of the search.'
-      required: true
-      example: 'harry potter'
-      schema:
-        $ref: '#/components/schemas/SearchId'
+        $ref: '#/components/schemas/Query'
     legacyUserId:
       name: 'legacyUserId'
       in: 'path'
@@ -146,12 +125,16 @@ components:
       example: '29A10F616FE6CA5C6E06EBF507A9FDC5BB89F8EBCF65726BEAC61C646854E83856D3B1D46BE4696EDCFB3C9F57EEBB6941D8654BC1F4B514D6217141AEA1653C'
       schema:
         $ref: '#/components/schemas/LegacyUserId'
+  requestBodies:
+    query:
+      required: true
+      content:
+        plain/text:
+          schema:
+            $ref: '#/components/schemas/Query'
 
   schemas:
-    SearchesId:
-      description: 'Searches list identifier. In the initial version, this can only be "default".'
-      type: string
-    SearchId:
+    Query:
       description: 'A search string.'
       type: string
     Searches:
