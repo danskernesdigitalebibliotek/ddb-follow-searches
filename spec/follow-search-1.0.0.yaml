@@ -7,9 +7,9 @@ info:
     url: 'https://www.gnu.org/licenses/gpl-3.0.html'
 
 tags:
-  - name: 'Search'
   - name: 'Migrate'
     description: Data migration
+  - name: 'Search'
 security:
   - BearerAuth: []
 paths:
@@ -106,15 +106,15 @@ components:
       in: 'path'
       description: 'The name of the list containing searches.'
       required: true
-      example: 'Fiction'
+      example: 'default'
       schema:
         $ref: '#/components/schemas/Query'
     searchTitle:
       name: 'searchTitle'
       in: 'path'
-      description: 'The title of the search to remove.'
+      description: 'The title of the search.'
       required: true
-      example: 'Harry Potter'
+      example: 'Fantasy'
       schema:
         $ref: '#/components/schemas/Query'
     legacyUserId:
@@ -137,6 +137,7 @@ components:
     Query:
       description: 'A search string.'
       type: string
+      example: 'Harry Potter'
     Searches:
       type: array
       items:

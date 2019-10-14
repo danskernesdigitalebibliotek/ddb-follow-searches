@@ -174,10 +174,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
      */
     public function fetchingSearchesNamed($list)
     {
-        $this->get("/list/$list", $this->getHeaders())
-        ->seeJsonContains([
-            'list' => $list,
-        ]);
+        $this->get("/list/$list", $this->getHeaders());
     }
 
     /**
@@ -191,7 +188,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     /**
      * @When search :query with title :title is added to the list :list
      */
-    public function searchWithTitleIsAddedToTheSearches($query, $list, $title)
+    public function searchWithTitleIsAddedToTheSearches($query, $title, $list)
     {
         $this->post("/list/$list/$title", [
             'query' => $query,

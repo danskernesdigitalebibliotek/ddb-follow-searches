@@ -7,8 +7,8 @@ Feature: Add to searches list
     When search "harry potter" with title "Harry" is added to the list "default"
     Then the system should return success
     When fetching "default" searches
-      | title  | query       | list    | last_seen        |
-      | Harry | harry potter | default | 2019-10-02 10:00 |
+      | title  | query       | last_seen        |
+      | Harry | harry potter | 2019-10-02 10:00 |
 
   Scenario: Add material to existing list
     Given a known user

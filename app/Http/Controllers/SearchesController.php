@@ -13,11 +13,11 @@ use Laravel\Lumen\Routing\Controller;
  */
 class SearchesController extends Controller
 {
-    public function get(Request $request, string $list)
+    public function get(string $list)
     {
         $data = DB::table('searches')
             ->where('list', '=', $list)
-            ->get(['list', 'title', 'query', 'last_seen']);
+            ->get(['title', 'query', 'last_seen']);
 
         return Response($data);
     }
