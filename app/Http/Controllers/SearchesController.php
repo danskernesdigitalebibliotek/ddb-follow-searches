@@ -33,20 +33,24 @@ class SearchesController extends Controller
    */
     public function addSearch(Request $request, string $list, string $title)
     {
+        $this->validate($request, [
+            'query' => 'required|string|min:1|max:2048',
+        ]);
+
         DB::table('searches')
-        ->updateOrInsert(
-            [
-                'guid' => $request->user()->getId(),
-                'list' => $list,
-                'title' => $title,
-                'query' => $request->get('query')
-            ],
-            [
-                // We need to format the date ourselves to add microseconds.
-                'changed_at' => Carbon::now()->format('Y-m-d H:i:s.u'),
-                'last_seen' => Carbon::now()
-            ]
-        );
+            ->updateOrInsert(
+                [
+                    'guid' => $request->user()->getId(),
+                    'list' => $list,
+                    'title' => $title,
+                    'query' => $request->get('query')
+                ],
+                [
+                    // We need to format the date ourselves to add microseconds.
+                    'changed_at' => Carbon::now()->format('Y-m-d H:i:s.u'),
+                    'last_seen' => Carbon::now()
+                ]
+            );
 
         return new Response('', 201);
     }
