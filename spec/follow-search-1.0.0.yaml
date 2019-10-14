@@ -129,15 +129,20 @@ components:
     query:
       required: true
       content:
-        plain/text:
+        application/json:
           schema:
             $ref: '#/components/schemas/Query'
 
   schemas:
     Query:
-      description: 'A search string.'
-      type: string
-      example: 'Harry Potter'
+      description: 'Search definition.'
+      type: object
+      additionalProperties: false
+      required:
+        - query
+      properties:
+        query:
+          $ref: '#/components/schemas/SearchQuery'
     Searches:
       type: array
       items:
@@ -151,7 +156,9 @@ components:
         materials:
           $ref: '#/components/schemas/Material'
     SearchQuery:
+      description: 'A search query'
       type: string
+      example: 'Harry Potter'
     SearchInformation:
       description: 'Information about search'
       type: object

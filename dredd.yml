@@ -3,7 +3,7 @@ dry-run: null
 hookfiles: tests/dredd/hooks.php
 language: vendor/bin/dredd-hooks-php
 require: null
-server: 'php -S 0.0.0.0:8080 -t public'
+server: './scripts/run-test-server.sh'
 server-wait: 3
 init: false
 custom: {}
