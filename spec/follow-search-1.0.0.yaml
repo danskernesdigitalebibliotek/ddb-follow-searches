@@ -31,7 +31,23 @@ paths:
         default:
           description: 'Unspecified error.'
 
-  /list/{listName}/{searchTitle}:
+  /list/{listName}/add:
+    post:
+      operationId: addSearch
+      tags:
+        - Search
+      description: 'Add search to the list.'
+      requestBody:
+        $ref: '#/components/requestBodies/addSearch'
+      parameters:
+        - $ref: '#/components/parameters/listName'
+      responses:
+        201:
+          description: 'The search was successfully added to the list.'
+        default:
+          description: 'Unspecified error.'
+
+  /list/{listName}/{searchId}:
     get:
       operationId: checkListMaterial
       tags:
@@ -39,7 +55,7 @@ paths:
       description: 'Get the search results for a specific search.'
       parameters:
         - $ref: '#/components/parameters/listName'
-        - $ref: '#/components/parameters/searchTitle'
+        - $ref: '#/components/parameters/searchId'
       responses:
         200:
           description: 'The search with the specified ID exists.'
@@ -51,21 +67,6 @@ paths:
           description: 'The search does not exist.'
         default:
           description: 'Unspecified error.'
-    post:
-      operationId: addSearch
-      tags:
-        - Search
-      description: 'Add search to the list.'
-      requestBody:
-        $ref: '#/components/requestBodies/query'
-      parameters:
-        - $ref: '#/components/parameters/listName'
-        - $ref: '#/components/parameters/searchTitle'
-      responses:
-        201:
-          description: 'The search was successfully added to the list.'
-        default:
-          description: 'Unspecified error.'
     delete:
       operationId: deleteSearch
       tags:
@@ -73,7 +74,7 @@ paths:
       description: 'Delete search from list.'
       parameters:
         - $ref: '#/components/parameters/listName'
-        - $ref: '#/components/parameters/searchTitle'
+        - $ref: '#/components/parameters/searchId'
       responses:
         204:
           description: 'Successfully removed.'
@@ -108,15 +109,15 @@ components:
       required: true
       example: 'default'
       schema:
-        $ref: '#/components/schemas/Query'
-    searchTitle:
-      name: 'searchTitle'
+        $ref: '#/components/schemas/ListId'
+    searchId:
+      name: 'searchId'
       in: 'path'
-      description: 'The title of the search.'
+      description: 'The identifier of the search.'
       required: true
-      example: 'Fantasy'
+      example: 42
       schema:
-        $ref: '#/components/schemas/Query'
+        $ref: '#/components/schemas/SearchId'
     legacyUserId:
       name: 'legacyUserId'
       in: 'path'
@@ -126,21 +127,32 @@ components:
       schema:
         $ref: '#/components/schemas/LegacyUserId'
   requestBodies:
-    query:
+    addSearch:
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Query'
+            $ref: '#/components/schemas/Search'
 
   schemas:
-    Query:
+    ListId:
+      description: List identifier. Currently only 'default'
+      type: string
+      example: 'default'
+    SearchId:
+      description: 'Search identifier'
+      type: string
+      example: 42
+    Search:
       description: 'Search definition.'
       type: object
       additionalProperties: false
       required:
+        - title
         - query
       properties:
+        title:
+          $ref: '#/components/schemas/SearchTitle'
         query:
           $ref: '#/components/schemas/SearchQuery'
     Searches:
@@ -155,10 +167,14 @@ components:
       properties:
         materials:
           $ref: '#/components/schemas/Material'
+    SearchTitle:
+      description: 'Title of search'
+      type: string
+      example: 'Harry Potter stuff'
     SearchQuery:
       description: 'A search query'
       type: string
-      example: 'Harry Potter'
+      example: 'harry potter'
     SearchInformation:
       description: 'Information about search'
       type: object

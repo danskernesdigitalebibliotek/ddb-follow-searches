@@ -37,10 +37,11 @@ class SearchesController extends Controller
      * @return \Illuminate\Http\Response
      *   The illuminate http response object.
      */
-    public function addSearch(Request $request, string $list, string $title)
+    public function addSearch(Request $request, string $list)
     {
         $this->checkList($list);
         $this->validate($request, [
+            'title' => 'required|string|min:1|max:2048',
             'query' => 'required|string|min:1|max:2048',
         ]);
 
@@ -49,7 +50,7 @@ class SearchesController extends Controller
                 [
                     'guid' => $request->user()->getId(),
                     'list' => $list,
-                    'title' => $title,
+                    'title' => $request->get('title'),
                     'query' => $request->get('query')
                 ],
                 [
@@ -62,14 +63,14 @@ class SearchesController extends Controller
         return new Response('', 201);
     }
 
-    public function removeSearch(Request $request, string $list, string $title)
+    public function removeSearch(Request $request, string $listName, string $searchId)
     {
-        $this->checkList($list);
+        $this->checkList($listName);
         $count = DB::table('searches')
             ->where([
                 'guid' => $request->user()->getId(),
-                'list' => $list,
-                'title' => $title,
+                'list' => $listName,
+                'id' => $searchId,
             ])->delete();
         return new Response('', $count > 0 ? 204 : 404);
     }

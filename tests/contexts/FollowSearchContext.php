@@ -239,7 +239,8 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     public function searchWithTitleIsAddedToTheSearches($query, $title)
     {
         $list = 'default';
-        $this->post("/list/$list/" . rawurlencode($title), [
+        $this->post("/list/$list/add", [
+            'title' => $title,
             'query' => $query,
         ], $this->getHeaders());
 
