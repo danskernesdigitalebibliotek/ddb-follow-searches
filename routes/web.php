@@ -20,4 +20,5 @@ $router->group(['middleware' => 'auth'], function ($router) {
     $router->get('/list/{listName}', 'SearchesController@get');
     $router->get('/list/{listName}/{searchTitle}', 'SearchesController@getSearch');
     $router->post('/list/{listName}/{searchTitle}', 'SearchesController@addSearch');
+    $router->delete('/list/{listName}/{searchTitle}', 'SearchesController@removeSearch');
 });

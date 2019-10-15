@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Laravel\Lumen\Routing\Controller;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class implementing the searches controller.
@@ -53,5 +54,24 @@ class SearchesController extends Controller
             );
 
         return new Response('', 201);
+    }
+
+    protected function checkList($list)
+    {
+        if ($list != 'default') {
+            throw new NotFoundHttpException('No such list');
+        }
+    }
+
+    public function removeSearch(Request $request, string $list, string $title)
+    {
+        $this->checkList($list);
+        $count = DB::table('searches')
+            ->where([
+                'guid' => $request->user()->getId(),
+                'list' => $list,
+                'title' => $title,
+            ])->delete();
+        return new Response('', $count > 0 ? 204 : 404);
     }
 }
