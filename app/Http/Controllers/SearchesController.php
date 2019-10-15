@@ -16,24 +16,30 @@ class SearchesController extends Controller
 {
     public function get(string $list)
     {
-        $data = DB::table('searches')
+        $this->checkList($list);
+        $searches = DB::table('searches')
             ->where('list', '=', $list)
+            ->orderBy('changed_at', 'desc')
             ->get(['title', 'query', 'last_seen']);
 
-        return Response($data);
+        foreach ($searches as $search) {
+            $search->hit_count = 0;
+        }
+        return Response($searches);
     }
 
     /**
- * Add a search to the table.
-   *
-   * @param \Illuminate\Http\Request $request
-   *   The illuminate http request object.
-   *
-   * @return \Illuminate\Http\Response
-   *   The illuminate http response object.
-   */
+     * Add a search to the table.
+     *
+     * @param \Illuminate\Http\Request $request
+     *   The illuminate http request object.
+     *
+     * @return \Illuminate\Http\Response
+     *   The illuminate http response object.
+     */
     public function addSearch(Request $request, string $list, string $title)
     {
+        $this->checkList($list);
         $this->validate($request, [
             'query' => 'required|string|min:1|max:2048',
         ]);
@@ -56,13 +62,6 @@ class SearchesController extends Controller
         return new Response('', 201);
     }
 
-    protected function checkList($list)
-    {
-        if ($list != 'default') {
-            throw new NotFoundHttpException('No such list');
-        }
-    }
-
     public function removeSearch(Request $request, string $list, string $title)
     {
         $this->checkList($list);
@@ -73,5 +72,12 @@ class SearchesController extends Controller
                 'title' => $title,
             ])->delete();
         return new Response('', $count > 0 ? 204 : 404);
+    }
+
+    protected function checkList(string $listId)
+    {
+        if ($listId != 'default') {
+            throw new NotFoundHttpException('No such list');
+        }
     }
 }
