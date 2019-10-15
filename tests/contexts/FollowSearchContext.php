@@ -278,7 +278,9 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     public function theSearchesHasTheFollowingHitcounts(TableNode $table)
     {
         foreach ($table as $row) {
-            $pids = isset($row['pids']) ? array_map(function ($pid) { return trim($pid);}, explode(',', $row['pids'])) : [];
+            $pids = isset($row['pids']) ? array_map(function ($pid) {
+                return trim($pid);
+            }, explode(',', $row['pids'])) : [];
             $hitcount = isset($row['hitcount']) ? $row['hitcount'] : count($pids);
             $this->state['searchResults'][$row['query']] = [
                 'hitcount' => $hitcount,
@@ -297,7 +299,12 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
         foreach ($table as $row) {
             foreach ($row as $prop => $value) {
                 if ($response[$index][$prop] != $value) {
-                    throw new Exception("Unexpected \"{$prop}\": \"{$response[$index][$prop]}\", expected \"{$value}\"");
+                    throw new Exception(sprintf(
+                        'Unexpected "%s": "%s", expected "%s"',
+                        $prop,
+                        $response[$index][$prop],
+                        $value
+                    ));
                 }
             }
             $index++;
