@@ -2,3 +2,5 @@
 .env
 /coverage
 secrets.env
+Envoy*
+!Envoy.blade.php
