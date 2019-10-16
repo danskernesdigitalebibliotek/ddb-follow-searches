@@ -1,7 +1,9 @@
 <?php
 
+use App\SearchHandler;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
+use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
@@ -10,6 +12,9 @@ use Faker\Generator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Facade;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
+use Prophecy\ObjectProphecy;
+use Prophecy\Argument;
+use Prophecy\Prophet;
 
 // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class FollowSearchContext implements Context, SnippetAcceptingContext
@@ -33,9 +38,19 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     /**
      * Faker instance.
      *
-     * @var Faker\Generator
+     * @var \Faker\Generator
      */
     protected $faker;
+
+    /**
+     * @var \Prophecy\Prophet
+     */
+    protected $prophet;
+
+    /**
+     * @var \Prophecy\ObjectProphecy
+     */
+    protected $searchHandler;
 
     /**
      * Scenario state data.
@@ -81,6 +96,24 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
 
         // Run migration to create db tables.
         $this->artisan('migrate:fresh');
+
+        $this->prophet = new Prophet();
+
+        // Create a SearchHandler mock.
+        $searchHandler = $this->prophet->prophesize(SearchHandler::class);
+        $this->app->singleton(SearchHandler::class, function () use ($searchHandler) {return $searchHandler->reveal();});
+        $this->searchHandler = $searchHandler;
+    }
+
+    /**
+     * Clean up after each scenario.
+     *
+     * @AfterScenario
+     */
+    public function after(AfterScenarioScope $scope)
+    {
+        // If something locked down time, release it before the next scenario.
+        Carbon::setTestNow(null);
     }
 
     /**
@@ -277,16 +310,28 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
      */
     public function theSearchesHasTheFollowingHitcounts(TableNode $table)
     {
+        $hitcounts = [];
         foreach ($table as $row) {
             $pids = isset($row['pids']) ? array_map(function ($pid) {
                 return trim($pid);
             }, explode(',', $row['pids'])) : [];
             $hitcount = isset($row['hitcount']) ? $row['hitcount'] : count($pids);
-            $this->state['searchResults'][$row['query']] = [
+            $hitcounts[$row['query']] = [
                 'hitcount' => $hitcount,
                 'pids' => $pids,
             ];
         }
+
+        $this->searchHandler->getCounts(Argument::any())->will(function ($args) use ($hitcounts) {
+            $res = [];
+            foreach ($args[0] as $id => $search) {
+                $res[$id] = isset($hitcounts[$search['query']]['hitcount']) ?
+                    $hitcounts[$search['query']]['hitcount'] :
+                    0;
+            }
+
+            return $res;
+        });
     }
 
     /**
@@ -309,6 +354,5 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
             }
             $index++;
         }
-        throw new PendingException();
     }
 }

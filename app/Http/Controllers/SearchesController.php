@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\SearchHandler;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
@@ -14,16 +15,22 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class SearchesController extends Controller
 {
-    public function get(string $list)
+    public function get(SearchHandler $searchHandler, string $list)
     {
         $this->checkList($list);
         $searches = DB::table('searches')
             ->where('list', '=', $list)
             ->orderBy('changed_at', 'desc')
-            ->get(['title', 'query', 'last_seen']);
+            ->get(['id', 'title', 'query', 'last_seen']);
+
+        $counts = [];
 
         foreach ($searches as $search) {
-            $search->hit_count = 0;
+            $counts[$search->id] = ['query' => $search->query, 'last_seen' => $search->last_seen];
+        }
+        $counts = $searchHandler->getCounts($counts);
+        foreach ($searches as $search) {
+            $search->hit_count = isset($counts[$search->id]) ? $counts[$search->id] : 0;
         }
         return Response($searches);
     }

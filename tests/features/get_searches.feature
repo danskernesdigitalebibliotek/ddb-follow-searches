@@ -28,9 +28,9 @@ Feature: Fetching searches list
     Then the system should return success
     And the searches list should contain:
       | title       | query             | last_seen           | hit_count |
-      | Sightseeing | Hitchhikers Guide | 2019-10-02 10:00:00 |         3 |
-      | Onkel Danny | Dan Turèll        | 2019-10-02 09:00:00 |         4 |
       | Harry       | harry potter      | 2019-10-01 10:00:00 |         2 |
+      | Onkel Danny | Dan Turèll        | 2019-10-02 09:00:00 |         4 |
+      | Sightseeing | Hitchhikers Guide | 2019-10-02 10:00:00 |         3 |
 
   Scenario: The searches list is ordered by creation date, newest first
     Given a known user

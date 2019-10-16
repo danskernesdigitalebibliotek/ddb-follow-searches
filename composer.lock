@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a3fffbe79c6c9fff68c12213c9d175d",
+    "content-hash": "1524cd15d29534772d572f6af9f6bb08",
     "packages": [
         {
             "name": "danskernesdigitalebibliotek/oauth2-adgangsplatformen",
@@ -70,6 +70,53 @@
                 "issues": "https://github.com/reload/oauth2-adgangsplatformen/issues"
             },
             "time": "2019-09-11T12:04:59+00:00"
+        },
+        {
+            "name": "danskernesdigitalebibliotek/openplatform-client",
+            "version": "dev-getters-and-setters",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reload/openplatform-client.git",
+                "reference": "a4f94745aa3a79344e352493857702826df94635"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reload/openplatform-client/zipball/a4f94745aa3a79344e352493857702826df94635",
+                "reference": "a4f94745aa3a79344e352493857702826df94635",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/http-client": "^4.3"
+            },
+            "require-dev": {
+                "jangregor/phpstan-prophecy": "^0.4.2",
+                "mnapoli/silly": "^1.7",
+                "phpstan/extension-installer": "^1.0",
+                "phpstan/phpstan": "^0.11.16",
+                "phpunit/phpunit": "^7 || ^8",
+                "squizlabs/php_codesniffer": "^3.5",
+                "symfony/yaml": "^4.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DDB\\OpenPlatform\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "DDB\\OpenPlatform\\": "tests/"
+                }
+            },
+            "license": [
+                "AGPL"
+            ],
+            "description": "Client for the Open Platform service for the danish libraries",
+            "support": {
+                "source": "https://github.com/reload/openplatform-client/tree/getters-and-setters",
+                "issues": "https://github.com/reload/openplatform-client/issues"
+            },
+            "time": "2019-10-16T19:34:18+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -2823,6 +2870,125 @@
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
             "time": "2019-08-14T12:26:46+00:00"
+        },
+        {
+            "name": "symfony/http-client",
+            "version": "v4.3.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/http-client.git",
+                "reference": "69d438274718121e1166e7f65c290f891a4c8ddb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/http-client/zipball/69d438274718121e1166e7f65c290f891a4c8ddb",
+                "reference": "69d438274718121e1166e7f65c290f891a4c8ddb",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3",
+                "psr/log": "^1.0",
+                "symfony/http-client-contracts": "^1.1.7",
+                "symfony/polyfill-php73": "^1.11"
+            },
+            "provide": {
+                "psr/http-client-implementation": "1.0",
+                "symfony/http-client-implementation": "1.1"
+            },
+            "require-dev": {
+                "nyholm/psr7": "^1.0",
+                "psr/http-client": "^1.0",
+                "symfony/http-kernel": "^4.3",
+                "symfony/process": "^4.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\HttpClient\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony HttpClient component",
+            "homepage": "https://symfony.com",
+            "time": "2019-10-07T10:52:41+00:00"
+        },
+        {
+            "name": "symfony/http-client-contracts",
+            "version": "v1.1.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/http-client-contracts.git",
+                "reference": "353b2a3e907e5c34cf8f74827a4b21eb745aab1d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/http-client-contracts/zipball/353b2a3e907e5c34cf8f74827a4b21eb745aab1d",
+                "reference": "353b2a3e907e5c34cf8f74827a4b21eb745aab1d",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3"
+            },
+            "suggest": {
+                "symfony/http-client-implementation": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Contracts\\HttpClient\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Generic abstractions related to HTTP clients",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "abstractions",
+                "contracts",
+                "decoupling",
+                "interfaces",
+                "interoperability",
+                "standards"
+            ],
+            "time": "2019-09-26T22:09:58+00:00"
         },
         {
             "name": "symfony/http-foundation",
@@ -7165,7 +7331,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "danskernesdigitalebibliotek/oauth2-adgangsplatformen": 20
+        "danskernesdigitalebibliotek/oauth2-adgangsplatformen": 20,
+        "danskernesdigitalebibliotek/openplatform-client": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

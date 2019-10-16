@@ -7,11 +7,16 @@
         {
             "type": "vcs",
             "url": "https://github.com/reload/oauth2-adgangsplatformen"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/reload/openplatform-client"
         }
     ],
     "require": {
         "php": "^7.2",
         "danskernesdigitalebibliotek/oauth2-adgangsplatformen": "dev-master",
+        "danskernesdigitalebibliotek/openplatform-client": "dev-getters-and-setters",
         "laravel/lumen-framework": "^6.0",
         "softonic/laravel-psr15-bridge": "^1.1"
     },
