@@ -1,0 +1,35 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - 'feature/FSS-17'
+#   pull_request:
+#     types: [closed]
+#     branches:
+#       - master
+#       - develop
+#       - 'feature/FSS-17'
+jobs:
+  deploy:
+    name: Deploy
+    if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/feature/FSS-17' || github.ref == 'refs/heads/develop') && !github.event.deleted # && github.event.pull_request.merged
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Install envoy
+      run: composer global require "laravel/envoy"
+    - name: Deploy to production
+      env:
+        SSH_KEY: ${{ secrets.SSH_KEY }}
+        PROD: ${{ (github.ref == 'refs/heads/feature/FSS-17') }}
+      run: |
+        mkdir -p ~/.ssh && echo "${SSH_KEY}" >> ~/.ssh/id_rsa
+        chmod 400 ~/.ssh/id_rsa
+        eval "$(ssh-agent -s)"
+        ssh-add ~/.ssh/id_rsa
+        ssh-keyscan -p 222 followsearches.dandigbib.org > ~/.ssh/known_hosts
+        if [ "$PROD" == "TRUE" ]; then
+          ~/.composer/vendor/bin/envoy run deploy --env=prod
+        else
+          ~/.composer/vendor/bin/envoy run deploy --env=stage
+        fi
