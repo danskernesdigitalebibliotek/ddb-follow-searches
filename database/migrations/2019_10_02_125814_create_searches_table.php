@@ -18,9 +18,10 @@ class CreateSearchesTable extends Migration
             $table->string('guid')->index();
             $table->string('title');
             $table->string('list');
-            $table->string('query', 2048);
+            $table->string('query');
             $table->timestamp('last_seen');
-            $table->timestamp('changed_at', 6);
+            $table->timestamp('changed_at', 6)->nullable();
+            $table->unique(['guid', 'query']);
         });
     }
     /**

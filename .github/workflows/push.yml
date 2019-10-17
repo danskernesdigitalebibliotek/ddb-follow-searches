@@ -1,5 +1,5 @@
 on: push
-name: Build, test, and deploy
+name: Build and test
 jobs:
   check_codestyle:
     name: Codestyle
