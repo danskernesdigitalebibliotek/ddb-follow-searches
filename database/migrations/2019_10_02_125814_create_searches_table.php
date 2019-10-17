@@ -16,7 +16,7 @@ class CreateSearchesTable extends Migration
         Schema::create('searches', function (Blueprint $table) {
             $table->increments('id');
             $table->string('guid')->index();
-            $table->string('title', 2048);
+            $table->string('title');
             $table->string('list');
             $table->string('query', 2048);
             $table->timestamp('last_seen');
