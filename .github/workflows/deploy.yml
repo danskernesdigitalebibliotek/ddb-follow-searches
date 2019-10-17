@@ -1,18 +1,14 @@
 name: Deploy
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
-      - 'feature/FSS-17'
-#   pull_request:
-#     types: [closed]
-#     branches:
-#       - master
-#       - develop
-#       - 'feature/FSS-17'
+      - master
+      - develop
 jobs:
   deploy:
     name: Deploy
-    if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/feature/FSS-17' || github.ref == 'refs/heads/develop') && !github.event.deleted # && github.event.pull_request.merged
+    if: (!github.event.deleted && github.event.pull_request.merged)
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -21,7 +17,7 @@ jobs:
     - name: Deploy to production
       env:
         SSH_KEY: ${{ secrets.SSH_KEY }}
-        PROD: ${{ (github.ref == 'refs/heads/feature/FSS-17') }}
+        PROD: ${{ (github.ref == 'refs/heads/master') }}
       run: |
         mkdir -p ~/.ssh && echo "${SSH_KEY}" >> ~/.ssh/id_rsa
         chmod 400 ~/.ssh/id_rsa
