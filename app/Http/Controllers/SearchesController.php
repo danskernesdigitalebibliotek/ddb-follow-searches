@@ -85,7 +85,7 @@ class SearchesController extends Controller
             throw new NotFoundHttpException('No such list');
         }
 
-        $materials = $searchHandler->getSearch($search->query, Carbon::parse($search->last_seen));
+        $materials = $searchHandler->getSearch($search->query, Carbon::createFromTimestamp($search->last_seen));
 
         DB::table('searches')
             ->where('id', $search->id)
