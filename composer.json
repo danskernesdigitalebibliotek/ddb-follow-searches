@@ -7,11 +7,16 @@
         {
             "type": "vcs",
             "url": "https://github.com/reload/oauth2-adgangsplatformen"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/reload/openplatform-client"
         }
     ],
     "require": {
         "php": "^7.2",
         "danskernesdigitalebibliotek/oauth2-adgangsplatformen": "dev-master",
+        "danskernesdigitalebibliotek/openplatform-client": "dev-master",
         "laravel/lumen-framework": "^6.0",
         "softonic/laravel-psr15-bridge": "^1.1"
     },
@@ -20,8 +25,10 @@
         "ddelnano/dredd-hooks-php": "^1.1",
         "fzaninotto/faker": "^1.4",
         "guzzlehttp/guzzle": "^6.3",
+        "jangregor/phpstan-prophecy": "^0.4.2",
         "matthiasnoback/behat-local-code-coverage-extension": "^0.3.0",
         "mockery/mockery": "^1.0",
+        "nunomaduro/larastan": "^0.4.2",
         "phpstan/extension-installer": "^1.0",
         "phpstan/phpstan": "^0.11.12",
         "phpstan/phpstan-symfony": "^0.11.6",

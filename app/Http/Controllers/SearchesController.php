@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\SearchHandler;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
@@ -14,27 +15,40 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class SearchesController extends Controller
 {
-    public function get(string $list)
+    public function get(SearchHandler $searchHandler, string $listName)
     {
-        $data = DB::table('searches')
-            ->where('list', '=', $list)
-            ->get(['title', 'query', 'last_seen']);
+        $this->checkList($listName);
+        $searches = DB::table('searches')
+            ->where('list', '=', $listName)
+            ->orderBy('changed_at', 'desc')
+            ->get(['id', 'title', 'query', 'last_seen']);
 
-        return Response($data);
+        $counts = [];
+
+        foreach ($searches as $search) {
+            $counts[$search->id] = ['query' => $search->query, 'last_seen' => $search->last_seen];
+        }
+        $counts = $searchHandler->getCounts($counts);
+        foreach ($searches as $search) {
+            $search->hit_count = isset($counts[$search->id]) ? $counts[$search->id] : 0;
+        }
+        return $searches;
     }
 
     /**
- * Add a search to the table.
-   *
-   * @param \Illuminate\Http\Request $request
-   *   The illuminate http request object.
-   *
-   * @return \Illuminate\Http\Response
-   *   The illuminate http response object.
-   */
-    public function addSearch(Request $request, string $list, string $title)
+     * Add a search to the table.
+     *
+     * @param \Illuminate\Http\Request $request
+     *   The illuminate http request object.
+     *
+     * @return \Illuminate\Http\Response
+     *   The illuminate http response object.
+     */
+    public function addSearch(Request $request, string $listName)
     {
+        $this->checkList($listName);
         $this->validate($request, [
+            'title' => 'required|string|min:1|max:2048',
             'query' => 'required|string|min:1|max:2048',
         ]);
 
@@ -42,8 +56,8 @@ class SearchesController extends Controller
             ->updateOrInsert(
                 [
                     'guid' => $request->user()->getId(),
-                    'list' => $list,
-                    'title' => $title,
+                    'list' => $listName,
+                    'title' => $request->get('title'),
                     'query' => $request->get('query')
                 ],
                 [
@@ -56,22 +70,45 @@ class SearchesController extends Controller
         return new Response('', 201);
     }
 
-    protected function checkList($list)
+    public function getSearch(Request $request, SearchHandler $searchHandler, string $listName, string $searchId)
     {
-        if ($list != 'default') {
+        $this->checkList($listName);
+        $search = DB::table('searches')
+            ->where([
+                'guid' => $request->user()->getId(),
+                'list' => $listName,
+                'id' => $searchId,
+            ])
+            ->first();
+
+        if (!$search) {
             throw new NotFoundHttpException('No such list');
         }
+
+        $materials = $searchHandler->getSearch($search->query, Carbon::createFromTimestamp($search->last_seen));
+
+        DB::table('searches')
+            ->where('id', $search->id)
+            ->update(['last_seen' => Carbon::now()]);
+        return ['materials' => $materials];
     }
 
-    public function removeSearch(Request $request, string $list, string $title)
+    public function removeSearch(Request $request, string $listName, string $searchId)
     {
-        $this->checkList($list);
+        $this->checkList($listName);
         $count = DB::table('searches')
             ->where([
                 'guid' => $request->user()->getId(),
-                'list' => $list,
-                'title' => $title,
+                'list' => $listName,
+                'id' => $searchId,
             ])->delete();
         return new Response('', $count > 0 ? 204 : 404);
+    }
+
+    protected function checkList(string $listId)
+    {
+        if ($listId != 'default') {
+            throw new NotFoundHttpException('No such list');
+        }
     }
 }

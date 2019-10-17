@@ -4,13 +4,13 @@ Feature: Deleting searches from searches list
   Scenario: User should be able to delete search
     Given a known user
     And they have the following items on the list:
-      | title       | search            | last_seen        | with hit_count |
-      | Sightseeing | Hitchhikers Guide | 2019-10-02 10:00 |              3 |
-      | Onkel Danny | Dan Turèll        | 2019-10-02 09:00 |              4 |
-      | Harry       | harry potter      | 2019-10-01 10:00 |              2 |
+      | title       | query             | last_seen           |
+      | Sightseeing | Hitchhikers Guide | 2019-10-02 10:00:00 |
+      | Onkel Danny | Dan Turèll        | 2019-10-02 09:00:00 |
+      | Harry       | harry potter      | 2019-10-01 10:00:00 |
     When deleting the search "Harry" from the searches list
     Then the system should return success
-    And fetching the list should return:
-      | title       | search            | last_seen        | hit_count |
-      | Onkel Danny | Dan Turèll        | 2019-10-02 09:00 |         4 |
-      | Sightseeing | Hitchhikers Guide | 2019-10-02 10:00 |         3 |
+    And fetching searches should return:
+      | title       | query             | last_seen           |
+      | Onkel Danny | Dan Turèll        | 2019-10-02 09:00:00 |
+      | Sightseeing | Hitchhikers Guide | 2019-10-02 10:00:00 |

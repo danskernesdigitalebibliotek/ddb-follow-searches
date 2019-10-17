@@ -54,3 +54,10 @@ Hooks::beforeEach(function ($transaction) {
         $transaction->skip = true;
     }
 });
+
+Hooks::before('/list/{listName}/{searchId} > DELETE > 204', function ($transaction) {
+    // Use an ID that exists.
+    $replacements = ['42' => '1'];
+    $transaction->request->uri = strtr($transaction->request->uri, $replacements);
+    $transaction->fullPath = strtr($transaction->fullPath, $replacements);
+});
