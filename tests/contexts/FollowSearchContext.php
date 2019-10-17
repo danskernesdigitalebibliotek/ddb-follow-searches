@@ -131,7 +131,11 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
      */
     public function artisan($command, $parameters = [])
     {
-        return $this->app['Illuminate\Contracts\Console\Kernel']->call($command, $parameters);
+        $kernel = $this->app['Illuminate\Contracts\Console\Kernel'];
+        if (!$kernel) {
+            throw new Exception('Cannot call artisan without a kernel');
+        }
+        return $kernel->call($command, $parameters);
     }
 
     /**

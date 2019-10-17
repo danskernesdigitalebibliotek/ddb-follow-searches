@@ -24,9 +24,9 @@ class SearchHandler
      * Collects the count of new materials for each query, since the last_seen
      * date.
      *
-     * @param array $searhes
+     * @param array $searches
      *   Array of <id> => ['query' => <string>, 'last_seen' => <Carbon>]
-     * @param array
+     * @return array
      *   Counts in <id> => <count> format.
      */
     public function getCounts($searches): array

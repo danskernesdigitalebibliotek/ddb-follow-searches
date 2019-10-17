@@ -7,3 +7,6 @@ parameters:
         -
             message: '#Undefined variable: \$router#'
             path: 'routes/web.php'
+        -
+            message: '#Prophecy\\ObjectProphecy#'
+            path: 'tests/contexts/FollowSearchContext.php'
