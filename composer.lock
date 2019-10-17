@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1524cd15d29534772d572f6af9f6bb08",
+    "content-hash": "02ca0a31da9109b78e91a0a0aea62c54",
     "packages": [
         {
             "name": "danskernesdigitalebibliotek/oauth2-adgangsplatformen",
@@ -73,16 +73,16 @@
         },
         {
             "name": "danskernesdigitalebibliotek/openplatform-client",
-            "version": "dev-getters-and-setters",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reload/openplatform-client.git",
-                "reference": "a4f94745aa3a79344e352493857702826df94635"
+                "reference": "f31d4d31d88fc3fcbc604ae8385cdccca0a4bc61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reload/openplatform-client/zipball/a4f94745aa3a79344e352493857702826df94635",
-                "reference": "a4f94745aa3a79344e352493857702826df94635",
+                "url": "https://api.github.com/repos/reload/openplatform-client/zipball/f31d4d31d88fc3fcbc604ae8385cdccca0a4bc61",
+                "reference": "f31d4d31d88fc3fcbc604ae8385cdccca0a4bc61",
                 "shasum": ""
             },
             "require": {
@@ -113,10 +113,10 @@
             ],
             "description": "Client for the Open Platform service for the danish libraries",
             "support": {
-                "source": "https://github.com/reload/openplatform-client/tree/getters-and-setters",
+                "source": "https://github.com/reload/openplatform-client/tree/master",
                 "issues": "https://github.com/reload/openplatform-client/issues"
             },
-            "time": "2019-10-16T19:34:18+00:00"
+            "time": "2019-10-17T06:55:36+00:00"
         },
         {
             "name": "doctrine/inflector",

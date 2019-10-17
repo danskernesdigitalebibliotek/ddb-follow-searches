@@ -101,7 +101,11 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
 
         // Create a SearchHandler mock.
         $searchHandler = $this->prophet->prophesize(SearchHandler::class);
-        $this->app->singleton(SearchHandler::class, function () use ($searchHandler) {return $searchHandler->reveal();});
+        // Stub for those tests that don't care.
+        $searchHandler->getCounts(Argument::any())->willReturn([]);
+        $this->app->singleton(SearchHandler::class, function () use ($searchHandler) {
+            return $searchHandler->reveal();
+        });
         $this->searchHandler = $searchHandler;
     }
 
@@ -143,12 +147,30 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * Check the basic structure of the searches response.
+     * Get and check the basic structure of the searches response.
      *
      * @return array
      *   The response as array.
      */
-    protected function checkSearchesResponse(): array
+    protected function getSearchesResponse(): array
+    {
+        $this->checkStatusCode(200);
+        $json = $this->response->getContent();
+        if (!$json) {
+            throw new Exception('Empty response');
+        }
+        $response = json_decode($json, true);
+
+        return $response;
+    }
+
+    /**
+     * Get and check the basic structure of the search response.
+     *
+     * @return array
+     *   The response as array.
+     */
+    protected function getSearchResponse(): array
     {
         $this->checkStatusCode(200);
         $json = $this->response->getContent();
@@ -182,6 +204,21 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
                 'changed_at' => Carbon::now()->format('Y-m-d H:i:s.u'),
             ]);
         }
+    }
+
+    /**
+     * Get the id of the search with the given title.
+     */
+    protected function getSearchIdFromTitle($title)
+    {
+        $this->fetchingSearches();
+        $response = $this->getSearchesResponse();
+        foreach ($response as $search) {
+            if ($search['title'] == $title) {
+                return $search['id'];
+            }
+        }
+        throw new Exception(sprintf('Search "%s" not found on list', $title));
     }
 
     /**
@@ -286,7 +323,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
      */
     public function theSearchesListShouldBeEmtpy()
     {
-        $response = $this->checkSearchesResponse();
+        $response = $this->getSearchesResponse();
         if (!empty($response)) {
             throw new Exception('Searches not empty');
         }
@@ -332,6 +369,19 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
 
             return $res;
         });
+
+        foreach ($hitcounts as $query => $hitcount) {
+            $this->searchHandler->getSearch($query, Argument::any())->will(function ($args) use ($hitcount) {
+                $res = [];
+                foreach ($hitcount['pids'] as $pid) {
+                    $res[] = [
+                        'pid' => $pid,
+                    ];
+                }
+
+                return $res;
+            });
+        }
     }
 
     /**
@@ -339,7 +389,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
      */
     public function theSearchesListShouldContain(TableNode $table)
     {
-        $response = $this->checkSearchesResponse();
+        $response = $this->getSearchesResponse();
         $index = 0;
         foreach ($table as $row) {
             foreach ($row as $prop => $value) {
@@ -353,6 +403,76 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
                 }
             }
             $index++;
+        }
+    }
+
+    /**
+     * @When fetching searches should return:
+     */
+    public function fetchingSearchesShouldReturn(TableNode $table)
+    {
+        $this->fetchingSearches();
+        $this->theSystemShouldReturnSuccess();
+        $this->theSearchesListShouldContain($table);
+    }
+
+    /**
+     * @Then search :query should be on the list with title :title
+     */
+    public function searchShouldBeOnTheListWithTitle($query, $title)
+    {
+        $this->fetchingSearches();
+        $response = $this->getSearchesResponse();
+        foreach ($response as $search) {
+            if ($search['query'] == $query) {
+                if ($search['title'] == $title) {
+                    return;
+                } else {
+                    throw new Exception(sprintf('Query "%s" has wrong title: "%s"', $query, $search['title']));
+                }
+            }
+        }
+        throw new Exception(sprintf('Query "%s" not found on list', $query));
+    }
+
+    /**
+     * @When deleting the search :title from the searches list
+     */
+    public function deletingTheSearchFromTheSearchesList($title)
+    {
+        $this->delete("/list/default/" . $this->getSearchIdFromTitle($title), [], $this->getHeaders());
+    }
+
+    /**
+     * @When they fetch the :title search
+     */
+    public function theyFetchTheSearch($title)
+    {
+        $this->get("/list/default/" . $this->getSearchIdFromTitle($title), $this->getHeaders());
+    }
+
+    /**
+     * @Then the search result should be:
+     */
+    public function theSearchResultShouldBe(TableNode $table)
+    {
+        $response = $this->getSearchResponse();
+        $actualMaterials = $response['materials'];
+        $expectedPids = $table->getColumn(0);
+        // Lose header.
+        array_shift($expectedPids);
+        $expectedMaterials = [];
+        foreach ($expectedPids as $pid) {
+            $expectedMaterials[] = [
+                'pid' => $pid,
+            ];
+        }
+        if ($actualMaterials != $expectedMaterials) {
+            throw new Exception(sprintf(
+                'PIDs %s not equal %s',
+                var_export($actualMaterials, true),
+                var_export($expectedMaterials, true)
+            ));
         }
     }
 }
