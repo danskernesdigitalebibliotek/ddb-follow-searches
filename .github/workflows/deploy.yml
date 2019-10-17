@@ -14,7 +14,7 @@ jobs:
     - uses: actions/checkout@master
     - name: Install envoy
       run: composer global require "laravel/envoy"
-    - name: Deploy to production
+    - name: Deployment to server
       env:
         SSH_KEY: ${{ secrets.SSH_KEY }}
         PROD: ${{ (github.ref == 'refs/heads/master') }}
