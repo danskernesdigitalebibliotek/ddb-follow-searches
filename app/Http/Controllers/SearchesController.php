@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\SearchHandler;
+use App\Contracts\Searcher;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class SearchesController extends Controller
 {
-    public function get(SearchHandler $searchHandler, string $listName)
+    public function get(Searcher $searchHandler, string $listName)
     {
         $this->checkList($listName);
         $searches = DB::table('searches')
@@ -70,7 +70,7 @@ class SearchesController extends Controller
         return new Response('', 201);
     }
 
-    public function getSearch(Request $request, SearchHandler $searchHandler, string $listName, string $searchId)
+    public function getSearch(Request $request, Searcher $searchHandler, string $listName, string $searchId)
     {
         $this->checkList($listName);
         $search = DB::table('searches')

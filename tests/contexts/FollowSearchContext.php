@@ -1,6 +1,6 @@
 <?php
 
-use App\SearchHandler;
+use App\Contracts\Searcher;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
@@ -50,7 +50,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     /**
      * @var \Prophecy\ObjectProphecy
      */
-    protected $searchHandler;
+    protected $searcher;
 
     /**
      * Scenario state data.
@@ -99,14 +99,14 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
 
         $this->prophet = new Prophet();
 
-        // Create a SearchHandler mock.
-        $searchHandler = $this->prophet->prophesize(SearchHandler::class);
+        // Create a Searcher mock.
+        $searcher = $this->prophet->prophesize(Searcher::class);
         // Stub for those tests that don't care.
-        $searchHandler->getCounts(Argument::any())->willReturn([]);
-        $this->app->singleton(SearchHandler::class, function () use ($searchHandler) {
-            return $searchHandler->reveal();
+        $searcher->getCounts(Argument::any())->willReturn([]);
+        $this->app->singleton(Searcher::class, function () use ($searcher) {
+            return $searcher->reveal();
         });
-        $this->searchHandler = $searchHandler;
+        $this->searcher = $searcher;
     }
 
     /**
@@ -363,7 +363,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
             ];
         }
 
-        $this->searchHandler->getCounts(Argument::any())->will(function ($args) use ($hitcounts) {
+        $this->searcher->getCounts(Argument::any())->will(function ($args) use ($hitcounts) {
             $res = [];
             foreach ($args[0] as $id => $search) {
                 $res[$id] = isset($hitcounts[$search['query']]['hitcount']) ?
@@ -375,7 +375,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
         });
 
         foreach ($hitcounts as $query => $hitcount) {
-            $this->searchHandler->getSearch($query, Argument::any())->will(function ($args) use ($hitcount) {
+            $this->searcher->getSearch($query, Argument::any())->will(function ($args) use ($hitcount) {
                 $res = [];
                 foreach ($hitcount['pids'] as $pid) {
                     $res[] = [
