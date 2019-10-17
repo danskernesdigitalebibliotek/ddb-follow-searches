@@ -1,6 +1,6 @@
 [![](https://img.shields.io/codecov/c/github/reload/follow-search.svg?style=for-the-badge)](https://codecov.io/gh/reload/follow-search)
 
-![](https://github.com/reload/follow-search/workflows/.github/workflows/push.yml/badge.svg)
+![](https://github.com/reload/follow-search/workflows/Build,%20test%20and%20deploy/badge.svg)
 
 
 ## Installation ##
