@@ -139,7 +139,7 @@ jobs:
         eval "$(ssh-agent -s)"
         ssh-add ~/.ssh/id_rsa
         ssh-keyscan -p 222 followsearches.dandigbib.org > ~/.ssh/known_hosts
-        if [ "$PROD" == "TRUE" ]; then
+        if [ "$PROD" == "true" ]; then
           ~/.composer/vendor/bin/envoy run deploy --env=prod
         else
           ~/.composer/vendor/bin/envoy run deploy --env=stage
