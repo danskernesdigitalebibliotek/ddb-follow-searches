@@ -1,5 +1,8 @@
 [![](https://img.shields.io/codecov/c/github/reload/follow-search.svg?style=for-the-badge)](https://codecov.io/gh/reload/follow-search)
 
+![](https://github.com/reload/follow-search/workflows/.github/workflows/push.yml/badge.svg)
+
+
 ## Installation ##
 
 1. Run `docker run --rm --interactive --tty --volume $PWD:/app composer install` to install dependencies.
