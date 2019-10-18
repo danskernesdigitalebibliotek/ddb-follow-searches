@@ -12,8 +12,8 @@ use Faker\Generator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Facade;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
-use Prophecy\ObjectProphecy;
 use Prophecy\Argument;
+use Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
 
 // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
@@ -541,5 +541,23 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
                 var_export($searches, true)
             ));
         }
+    }
+
+    /*
+     * @And a migrated search list for legacy user id :legacyId:
+     */
+    public function aMigratedListForOuid($legacyId, TableNode $table)
+    {
+        $searches = $table->getColumn(0);
+        // Loose header.
+        array_shift($searches);
+        $this->addToList('legacy-' . $legacyId, 'default', $searches);
+    }
+    /**
+     * @When the user runs migrate for legacy user id :legacyId
+     */
+    public function theUserRunsMigrateWith($legacyId)
+    {
+        $this->put('/migrate/' . $legacyId, [], $this->getHeaders());
     }
 }

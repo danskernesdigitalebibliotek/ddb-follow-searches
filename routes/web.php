@@ -21,4 +21,6 @@ $router->group(['middleware' => 'auth'], function ($router) {
     $router->post('/list/{listName}/add', 'SearchesController@addSearch');
     $router->get('/list/{listName}/{searchId}', 'SearchesController@getSearch');
     $router->delete('/list/{listName}/{searchId}', 'SearchesController@removeSearch');
+
+    $router->put('/migrate/{openlistId}', 'MigrateController@migrate');
 });
