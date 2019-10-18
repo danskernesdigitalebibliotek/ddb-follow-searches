@@ -44,7 +44,9 @@ Hooks::beforeEach(function ($transaction) {
 
     // Skip all for now except 201 and DELETE.
     $transaction->skip = true;
-    if (preg_match('/(201|HEAD > \d{3})$/', $transaction->name) || $transaction->request->method === 'DELETE') {
+    if (preg_match('/(201|HEAD > \d{3})$/', $transaction->name) ||
+    $transaction->request->method === 'DELETE' ||
+    $transaction->request->method === 'PUT') {
         $transaction->skip = false;
     }
 
