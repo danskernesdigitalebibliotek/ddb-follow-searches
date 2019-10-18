@@ -7,7 +7,7 @@ use DDB\OpenPlatform\OpenPlatform;
 use DDB\OpenPlatform\Request\SearchRequest;
 use DDB\OpenPlatform\Response\SearchResponse;
 
-class SearchHandlerTest extends TestCase
+class SearchOpenPlatformTest extends TestCase
 {
     public function testGetCounts()
     {
@@ -47,13 +47,13 @@ class SearchHandlerTest extends TestCase
                     'holdingsitem.accessiondate>2019-10-03T11:00:00Z')
             ->willReturn($search2);
 
-        $searchHandler = new SearchHandler($op->reveal());
+        $searher = new SearchOpenPlatform($op->reveal());
 
         $searches = [
             3 => ['query' => 'harry', 'last_seen' => Carbon::parse('2019-10-02 10:00:00')],
             42 => ['query' => 'hitchhikers', 'last_seen' => Carbon::parse('2019-10-03 11:00:00')],
         ];
-        $res = $searchHandler->getCounts($searches);
+        $res = $searher->getCounts($searches);
 
         $this->assertEquals([3 => 4, 42 => 30], $res);
     }
@@ -86,9 +86,9 @@ class SearchHandlerTest extends TestCase
                     'holdingsitem.accessiondate>2019-10-05T13:00:00Z')
             ->willReturn($search);
 
-        $searchHandler = new SearchHandler($op->reveal());
+        $search = new SearchOpenPlatform($op->reveal());
 
-        $res = $searchHandler->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'));
+        $res = $search->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'));
 
         $this->assertEquals([['pid' => '1'], ['pid' => '2']], $res);
     }

@@ -2,10 +2,11 @@
 
 namespace App;
 
+use App\Contracts\Searcher;
 use DDB\OpenPlatform\OpenPlatform;
 use Illuminate\Support\Carbon;
 
-class SearchHandler
+class SearchOpenPlatform implements Searcher
 {
 
     /**
@@ -19,17 +20,9 @@ class SearchHandler
     }
 
     /**
-     * Return counts for searches.
-     *
-     * Collects the count of new materials for each query, since the last_seen
-     * date.
-     *
-     * @param array $searches
-     *   Array of <id> => ['query' => <string>, 'last_seen' => <Carbon>]
-     * @return array
-     *   Counts in <id> => <count> format.
+     * {@inheritdoc}
      */
-    public function getCounts($searches): array
+    public function getCounts(array $searches): array
     {
         $results = [];
         $responses = [];
@@ -49,17 +42,9 @@ class SearchHandler
     }
 
     /**
-     * Return new materials for the given query, since the given last seen.
-     *
-     * @param string $query
-     *   The CQL query.
-     * @param Carbon $lastSeen
-     *   The last seen date.
-     *
-     * @return array
-     *   List of materials, each an array with at least a 'pid' key.
+     * {@inheritdoc}
      */
-    public function getSearch($query, Carbon $lastSeen): array
+    public function getSearch(string $query, Carbon $lastSeen): array
     {
         $result = [];
         $res = $this->openplatform
