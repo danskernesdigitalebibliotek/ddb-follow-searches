@@ -15,11 +15,21 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class SearchesController extends Controller
 {
-    public function get(Searcher $searchHandler, string $listName)
+    public function get(Request $request, Searcher $searchHandler, string $listName)
     {
+
+        $this->validate($request, [
+            'size' => 'integer|min:1',
+            'page' => 'integer|min:1',
+        ]);
+
         $this->checkList($listName);
         $searches = DB::table('searches')
             ->where('list', '=', $listName)
+            ->when($request->query('size'), function ($query, $size) use ($request) {
+                $query->take($size);
+                $query->skip((intval($request->query('page', '1')) - 1) * $size);
+            })
             ->orderBy('changed_at', 'desc')
             ->get(['id', 'title', 'query', 'last_seen']);
 

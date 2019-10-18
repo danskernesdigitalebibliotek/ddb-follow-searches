@@ -2,5 +2,6 @@
 <ruleset>
     <file>.</file>
     <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*.blade.php</exclude-pattern>
     <rule ref="PSR2"/>
 </ruleset>
