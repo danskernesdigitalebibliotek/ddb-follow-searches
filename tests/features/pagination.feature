@@ -6,13 +6,26 @@ Feature: Searches can be paginated
     And they have searches from A to Z on their search list
     When fetching the search list page <page>, with a page size of <size>
     Then the system should return success
-    And fetching the searh list should contain <names>
+    And the search list should have searches <names>
 
     Examples:
       | page | size | names               |
-      |    1 |    5 | A, B, C, D, E       |
-      |    2 |    5 | F, G, H, I, J       |
-      |    1 |   10 | A,B,C,D,E,F,G,H,I,J |
-      |    2 |   10 | K,L,M,N,O,P,Q,R,S,T |
-      |    3 |   10 | U,V,W,X,Y,Z         |
-      |    4 |    5 |                     |
+      |    1 |    5 | Z,Y,X,W,V           |
+      |    2 |    5 | U,T,S,R,Q,          |
+      |    1 |   10 | Z,Y,X,W,V,U,T,S,R,Q |
+      |    2 |   10 | P,O,N,M,L,K,J,I,H,G |
+      |    3 |   10 | F,E,D,C,B,A         |
+      |   10 |    5 |                     |
+
+  Scenario: Client should be able to get full list without paging
+    Given a known user
+    And they have searches from A to Z on their search list
+    When fetching searches
+    Then the system should return success
+    And the search list should have searches Z,Y,X,W,V,U,T,S,R,Q,P,O,N,M,L,K,J,I,H,G,F,E,D,C,B,A
+
+  Scenario: Invalid page size should throw an error
+    Given a known user
+    And they have searches from A to Z on their search list
+    When fetching the search list page 2, with a page size of banana
+    Then the system should return validation error

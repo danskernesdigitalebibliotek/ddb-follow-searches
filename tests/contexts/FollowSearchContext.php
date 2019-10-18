@@ -264,8 +264,15 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
      */
     public function theSystemShouldReturnNotFound()
     {
-        print($this->response->getContent());
         $this->checkStatusCode(404);
+    }
+
+    /**
+     * @Then the system should return validation error
+     */
+    public function theSystemShouldReturnValidationError()
+    {
+        $this->checkStatusCode(422);
     }
 
     /**
@@ -294,9 +301,20 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     /**
      * @When fetching :list searches
      */
-    public function fetchingSearchesNamed($list)
+    public function fetchingSearchesNamed($list, $page = null, $size = null)
     {
-        $this->get("/list/$list", $this->getHeaders());
+        $query = [];
+        if ($page) {
+            $query[] = 'page=' . $page;
+        }
+        if ($size) {
+            $query[] = 'size=' . $size;
+        }
+        $query = implode('&', $query);
+        if ($query) {
+            $query = '?' . $query;
+        }
+        $this->get("/list/$list" . $query, $this->getHeaders());
     }
 
     /**
@@ -476,6 +494,51 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
                 'PIDs %s not equal %s',
                 var_export($actualMaterials, true),
                 var_export($expectedMaterials, true)
+            ));
+        }
+    }
+
+    /**
+     * @Given they have searches from A to Z on their search list
+     */
+    public function theyHaveSearchesFromAToZOnTheirSearchList()
+    {
+        // Create searches yesterday.
+        $time = Carbon::parse('yesterday');
+        Carbon::setTestNow($time);
+        foreach (range('A', 'Z') as $letter) {
+            $this->searchWithTitleIsAddedToTheSearches($letter, $letter);
+            $time->addSecond();
+        }
+    }
+
+    /**
+     * @When fetching the search list page :page, with a page size of :size
+     */
+    public function fetchingTheSearchListPageWithAPageSizeOf($page, $size)
+    {
+        $this->fetchingSearchesNamed('default', $page, $size);
+    }
+
+    /**
+     * @Then /^the search list should have searches (.*)$/
+     */
+    public function theSearchListShouldHaveSearches($searches)
+    {
+        $searches = explode(',', $searches);
+        $searches = array_filter(array_map('trim', $searches));
+
+        $response = $this->getSearchesResponse();
+        $index = 0;
+        $actualSearches = [];
+        foreach ($response as $search) {
+            $actualSearches[] = $search['title'];
+        }
+        if ($actualSearches != $searches) {
+            throw new Exception(sprintf(
+                'Searches "%s" does not match "%s"',
+                var_export($actualSearches, true),
+                var_export($searches, true)
             ));
         }
     }

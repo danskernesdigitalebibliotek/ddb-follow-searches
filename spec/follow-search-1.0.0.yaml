@@ -21,6 +21,20 @@ paths:
       description: 'Get all the users searches.'
       parameters:
         - $ref: '#/components/parameters/listName'
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+          description: 'The page of the result set. Pages are numbered from 1 and defaults to 1. Has no effect if size is not set.'
+          example: 3
+        - in: query
+          name: size
+          schema:
+            type: integer
+            minimum: 1
+          description: 'The number of results per page. If not supplied, return the full list.'
+          example: 10
       responses:
         200:
           description: 'The search data is returned.'
