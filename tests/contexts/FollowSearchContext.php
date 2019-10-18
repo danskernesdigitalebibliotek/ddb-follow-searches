@@ -544,7 +544,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     }
 
     /*
-     * @And a migrated search list for legacy user id :legacyId:
+     * @Given a migrated search list for legacy user id :legacyId:
      */
     public function aMigratedListForOuid($legacyId, TableNode $table)
     {
