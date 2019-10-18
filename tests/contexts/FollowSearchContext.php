@@ -543,15 +543,17 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
         }
     }
 
-    /*
+    /**
      * @Given a migrated search list for legacy user id :legacyId:
      */
     public function aMigratedListForOuid($legacyId, TableNode $table)
     {
-        $searches = $table->getColumn(0);
-        // Loose header.
-        array_shift($searches);
-        $this->addToList('legacy-' . $legacyId, 'default', $searches);
+        $columns = $table->getRow(0);
+        if (!in_array('title', $columns) || !in_array('query', $columns)) {
+            throw new Exception('Need at least "title" and "query" to create search');
+        }
+
+        $this->addToList('legacy-' . $legacyId, 'default', $table->getHash());
     }
     /**
      * @When the user runs migrate for legacy user id :legacyId
