@@ -36,7 +36,7 @@ class SearchesController extends Controller
         $counts = [];
 
         foreach ($searches as $search) {
-            $counts[$search->id] = ['query' => $search->query, 'last_seen' => $search->last_seen];
+            $counts[$search->id] = ['query' => $search->query, 'last_seen' => Carbon::parse($search->last_seen)];
         }
         $counts = $searchHandler->getCounts($counts);
         foreach ($searches as $search) {
@@ -95,7 +95,7 @@ class SearchesController extends Controller
             throw new NotFoundHttpException('No such list');
         }
 
-        $materials = $searchHandler->getSearch($search->query, Carbon::createFromTimestamp($search->last_seen));
+        $materials = $searchHandler->getSearch($search->query, Carbon::parse($search->last_seen));
 
         DB::table('searches')
             ->where('id', $search->id)
