@@ -5,6 +5,7 @@ namespace App;
 use App\Contracts\Searcher;
 use DDB\OpenPlatform\OpenPlatform;
 use Illuminate\Support\Carbon;
+use Throwable;
 
 class SearchOpenPlatform implements Searcher
 {
@@ -36,7 +37,11 @@ class SearchOpenPlatform implements Searcher
         }
 
         foreach ($responses as $id => $res) {
-            $results[$id] = $res->getHitCount();
+            try {
+                $results[$id] = $res->getHitCount();
+            } catch (Throwable $e) {
+                $results[$id] = 0;
+            }
         }
         return $results;
     }
@@ -52,12 +57,15 @@ class SearchOpenPlatform implements Searcher
             ->withFields(['pid'])
             ->execute();
 
-        foreach ($res->getMaterials() as $material) {
-            $result[] = [
-                'pid' => $material['pid'],
-            ];
+        try {
+            foreach ($res->getMaterials() as $material) {
+                $result[] = [
+                    'pid' => $material['pid'],
+                ];
+            }
+        } catch (Throwable $e) {
+            return [];
         }
-
         return $result;
     }
 
