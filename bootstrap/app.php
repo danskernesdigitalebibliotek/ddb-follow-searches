@@ -71,6 +71,7 @@ $app->singleton(
 */
 
 $app->register(\Adgangsplatformen\Support\Illuminate\AdgangsplatformenServiceProvider::class);
+$app->register(\App\Providers\AppServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
