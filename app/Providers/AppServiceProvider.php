@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(OpenPlatform::class, function ($app) {
-            return new OpenPlatform($app->make('request')->bearerToken());
+            return new OpenPlatform((string) $app->make('request')->bearerToken());
         });
 
         $this->app->singleton(Searcher::class, function ($app) {
