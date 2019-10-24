@@ -92,7 +92,7 @@ class SearchesController extends Controller
             ->first();
 
         if (!$search) {
-            throw new NotFoundHttpException('No such list');
+            throw new NotFoundHttpException('No such search');
         }
 
         $materials = $searchHandler->getSearch($search->query, Carbon::parse($search->last_seen));
