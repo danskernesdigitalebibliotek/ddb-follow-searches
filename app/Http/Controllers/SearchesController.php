@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Searcher;
+use App\Events\ListCreated;
+use App\Events\ListRetrieved;
+use App\Events\SearchAdded;
+use App\Events\SearchChecked;
+use App\Events\SearchRemoved;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
@@ -17,6 +22,8 @@ class SearchesController extends Controller
 {
     public function get(Request $request, Searcher $searchHandler, string $listName)
     {
+        /* @var \Adgangsplatformen\Provider\AdgangsplatformenUser $user */
+        $user = $request->user();
 
         $this->validate($request, [
             'size' => 'integer|min:1',
@@ -24,8 +31,10 @@ class SearchesController extends Controller
         ]);
 
         $this->checkList($listName);
+
         $searches = DB::table('searches')
             ->where('list', '=', $listName)
+            ->where('guid', '=', $user->getId())
             ->when($request->query('size'), function ($query, $size) use ($request) {
                 $query->take($size);
                 $query->skip((intval($request->query('page', '1')) - 1) * $size);
@@ -34,14 +43,17 @@ class SearchesController extends Controller
             ->get(['id', 'title', 'query', 'last_seen']);
 
         $counts = [];
-
         foreach ($searches as $search) {
             $counts[$search->id] = ['query' => $search->query, 'last_seen' => Carbon::parse($search->last_seen)];
         }
+
         $counts = $searchHandler->getCounts($counts);
         foreach ($searches as $search) {
             $search->hit_count = isset($counts[$search->id]) ? $counts[$search->id] : 0;
         }
+
+        event(new ListRetrieved($user, $listName));
+
         return $searches;
     }
 
@@ -57,6 +69,10 @@ class SearchesController extends Controller
     public function addSearch(Request $request, string $listName)
     {
         $this->checkList($listName);
+
+        /* @var \Adgangsplatformen\Provider\AdgangsplatformenUser $user */
+        $user = $request->user();
+
         $this->validate($request, [
             'title' => 'required|string|min:1|max:2048',
             'query' => 'required|string|min:1|max:2048',
@@ -77,15 +93,25 @@ class SearchesController extends Controller
                 ]
             );
 
+        if (DB::table('searches')->where('list', '=', $listName)->get(['*'])->count() == 1) {
+            event(new ListCreated($user, $listName));
+        }
+
+        event(new SearchAdded($user, $listName, DB::getPdo()->lastInsertId()));
+
         return new Response('', 201);
     }
 
     public function getSearch(Request $request, Searcher $searchHandler, string $listName, string $searchId)
     {
         $this->checkList($listName);
+
+        /* @var \Adgangsplatformen\Provider\AdgangsplatformenUser $user */
+        $user = $request->user();
+
         $search = DB::table('searches')
             ->where([
-                'guid' => $request->user()->getId(),
+                'guid' => $user->getId(),
                 'list' => $listName,
                 'id' => $searchId,
             ])
@@ -100,18 +126,30 @@ class SearchesController extends Controller
         DB::table('searches')
             ->where('id', $search->id)
             ->update(['last_seen' => Carbon::now()]);
+
+        event(new SearchChecked($user, $listName, $search->id));
+
         return ['materials' => $materials];
     }
 
     public function removeSearch(Request $request, string $listName, string $searchId)
     {
         $this->checkList($listName);
+
+        /* @var \Adgangsplatformen\Provider\AdgangsplatformenUser $user */
+        $user = $request->user();
+
         $count = DB::table('searches')
             ->where([
                 'guid' => $request->user()->getId(),
                 'list' => $listName,
                 'id' => $searchId,
             ])->delete();
+
+        if ($count > 0) {
+            event(new SearchRemoved($user, $listName, $searchId));
+        }
+
         return new Response('', $count > 0 ? 204 : 404);
     }
 

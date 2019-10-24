@@ -4,8 +4,68 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "affda94a7c2b38f0ec473364e8bdaa2b",
+    "content-hash": "078e3ca61f9bb4672e2589660b4e176a",
     "packages": [
+        {
+            "name": "danskernesdigitalebibliotek/ddb-stats-laravel",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reload/ddb-stats-laravel.git",
+                "reference": "7cb48dd5463211ed9e1191b10674aa1fecb438e4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reload/ddb-stats-laravel/zipball/7cb48dd5463211ed9e1191b10674aa1fecb438e4",
+                "reference": "7cb48dd5463211ed9e1191b10674aa1fecb438e4",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/database": "^6.0",
+                "illuminate/support": "^6.0",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "jangregor/phpstan-prophecy": "^0.4.2",
+                "laravel/lumen-framework": "^6.0",
+                "nunomaduro/larastan": "^0.4.1",
+                "orchestra/testbench": "^4.2",
+                "phpstan/extension-installer": "^1.0",
+                "phpstan/phpstan": "^0.11.16",
+                "phpstan/phpstan-mockery": "^0.11.3",
+                "phpunit/phpunit": "^8.3",
+                "slevomat/coding-standard": "^5.0",
+                "squizlabs/php_codesniffer": "^3.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "DDB\\Stats\\StatisticsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DDB\\Stats\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "DDB\\Stats\\": "tests/"
+                }
+            },
+            "license": [
+                "AGPL"
+            ],
+            "description": "Common stats collecting framework for Lumen based DDB microservices",
+            "support": {
+                "source": "https://github.com/reload/ddb-stats-laravel/tree/master",
+                "issues": "https://github.com/reload/ddb-stats-laravel/issues"
+            },
+            "time": "2019-10-21T07:43:44+00:00"
+        },
         {
             "name": "danskernesdigitalebibliotek/oauth2-adgangsplatformen",
             "version": "dev-master",
@@ -7880,7 +7940,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "danskernesdigitalebibliotek/oauth2-adgangsplatformen": 20,
-        "danskernesdigitalebibliotek/openplatform-client": 20
+        "danskernesdigitalebibliotek/openplatform-client": 20,
+        "danskernesdigitalebibliotek/ddb-stats-laravel": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

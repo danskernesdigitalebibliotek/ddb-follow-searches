@@ -31,6 +31,7 @@ $pathReplace = function ($transaction, $from, $to) {
 
 /* @var \Laravel\Lumen\Application $app */
 $app = require __DIR__ . '/../../bootstrap/app.php';
+$app->boot();
 $artisan = $app->make(ConsoleKernel::class);
 
 Hooks::beforeAll(function (&$transaction) use ($artisan) {

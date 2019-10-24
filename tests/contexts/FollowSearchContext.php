@@ -103,6 +103,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
         $searcher = $this->prophet->prophesize(Searcher::class);
         // Stub for those tests that don't care.
         $searcher->getCounts(Argument::any())->willReturn([]);
+        $searcher->getSearch(Argument::type('string'), Argument::type('\Illuminate\Support\Carbon'))->willReturn([]);
         $this->app->singleton(Searcher::class, function () use ($searcher) {
             return $searcher->reveal();
         });
@@ -561,5 +562,100 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     public function theUserRunsMigrateWith($legacyId)
     {
         $this->put('/migrate/' . $legacyId, [], $this->getHeaders());
+    }
+
+/**
+     * @Then there should be a :eventName event for the user
+    */
+    public function anEventForTheUserTheListhouldExist($eventName)
+    {
+        $statistics = $this->claimStatistics();
+        $events = array_filter($statistics, function (array $event) use ($eventName) {
+            // Content is a subarray which does not work with array_intersect.
+            // Remove it as it is irrelevant for our comparison.
+            unset($event['content']);
+            $expectedEventVars = [
+                'guid' => $this->state['token'],
+                'event' => $eventName,
+            ];
+            return $expectedEventVars == array_intersect_assoc($event, $expectedEventVars);
+        });
+        if (empty($events)) {
+            throw new Exception("Expected statistics $eventName event not found");
+        }
+        $this->state['event'] = array_shift($events);
+    }
+
+    /**
+     * @Then there should be a :eventName event for the user and a search with the title :title
+     */
+    public function anEventForTheUserTheListAndTitleShouldExist($eventName, $title)
+    {
+        $statistics = $this->claimStatistics();
+        $events = array_filter($statistics, function (array $event) use ($eventName, $title) {
+            // Content is a subarray which does not work with array_intersect.
+            // Remove it as it is irrelevant for our comparison.
+            unset($event['content']);
+            $expectedEventVars = [
+                'guid' => $this->state['token'],
+                'event' => $eventName,
+                'itemId' => $this->getSearchIdFromTitle($title)
+            ];
+
+            return $expectedEventVars == array_intersect_assoc($event, $expectedEventVars);
+        });
+        if (empty($events)) {
+            throw new Exception("Expected statistics $eventName event for search title '$title' not found");
+        }
+        $this->state['event'] = array_shift($events);
+    }
+
+    /**
+     * @Then the total count of elements for the event should be :count
+     */
+    public function theEventTotalCountOfElementsShouldBe($count)
+    {
+        if ($this->state['event']['totalCount'] !== $count) {
+            throw new Exception('Unexpected total count of elements: ' . $this->state['event']['totalCount']);
+        }
+    }
+
+    /**
+     * @Then the event elements should contain:
+     */
+    public function theEventElementsShouldContain(TableNode $table)
+    {
+        $elements = [
+            'event' => $table->getColumn(0),
+            'collectionId' => $table->getColumn(1),
+            'itemId' => $table->getColumn(2),
+        ];
+        $incorrect_values = [];
+        foreach ($elements as $key => $value) {
+            array_shift($value);
+            $correct_value = $this->state['event'][$key] === $value[0];
+            if (!$correct_value) {
+                $incorrect_values[$this->state['event'][$key]] = $value[0];
+            }
+        }
+        if (!empty($incorrect_values)) {
+            $exception_text = '';
+            foreach ($incorrect_values as $expected => $actual) {
+                $exception_text .= "Event is not the expected: \"$actual\" should be \"$expected\".\n";
+            }
+            throw new Exception($exception_text);
+        }
+    }
+
+    protected function claimStatistics(): array
+    {
+        $this->patch('/statistics', [], $this->getHeaders());
+        $statistics = json_decode($this->response->content(), true);
+        if ($statistics === null) {
+            throw new Exception('Unable to retrieve statistics. Invalid JSON: ' . json_last_error_msg());
+        } elseif (empty($statistics)) {
+            throw new Exception('No statistics returned');
+        }
+        return $statistics;
     }
 }
