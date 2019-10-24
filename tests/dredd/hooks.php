@@ -42,14 +42,6 @@ Hooks::beforeAll(function (&$transaction) use ($artisan) {
 Hooks::beforeEach(function ($transaction) {
     $transaction->request->headers->Authorization = 'Bearer test-user';
 
-    // Skip all for now except 201 and DELETE.
-    $transaction->skip = true;
-    if (preg_match('/(201|HEAD > \d{3})$/', $transaction->name) ||
-    $transaction->request->method === 'DELETE' ||
-    $transaction->request->method === 'PUT') {
-        $transaction->skip = false;
-    }
-
     // Skip internal error responses, we can't trigger those and HEAD requests
     // which dredd doesn't support.
     if (preg_match('/(500|HEAD > \d{3})$/', $transaction->name)) {
@@ -62,4 +54,14 @@ Hooks::before('/list/{listName}/{searchId} > DELETE > 204', function ($transacti
     $replacements = ['42' => '1'];
     $transaction->request->uri = strtr($transaction->request->uri, $replacements);
     $transaction->fullPath = strtr($transaction->fullPath, $replacements);
+});
+
+Hooks::before('/list/{listName}/{searchId} > GET > 200 > application/json', function ($transaction) {
+    // Use an ID that exists.
+    $replacements = ['42' => '1'];
+    $transaction->request->uri = strtr($transaction->request->uri, $replacements);
+    $transaction->fullPath = strtr($transaction->fullPath, $replacements);
+
+    // Fix the expection to what the SearchTesting search provider will return.
+    $transaction->expected->body = '{"materials":[{"pid":"pid 1"},{"pid":"pid 0"}]}';
 });
