@@ -616,7 +616,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
      */
     public function theEventTotalCountOfElementsShouldBe($count)
     {
-        if ($this->state['event']['totalCount'] !== $count) {
+        if ($this->state['event']['totalCount'] != $count) {
             throw new Exception('Unexpected total count of elements: ' . $this->state['event']['totalCount']);
         }
     }
