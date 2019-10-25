@@ -29,7 +29,7 @@ class SearchOpenPlatform implements Searcher
         $responses = [];
         foreach ($searches as $id => $search) {
             $responses[$id] = $this->openplatform
-                ->search($this->getAccessionQuery($search['query'], $search['last_seen']))
+                ->search($this->getAccessionQuery($search['query'], Carbon::parse($search['last_seen'])))
                 // Limit result. We'd like to set this to 0, but OpenPlatform has
                 // a minimum of 1.
                 ->withLimit(1)
