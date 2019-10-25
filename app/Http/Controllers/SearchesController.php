@@ -74,7 +74,7 @@ class SearchesController extends Controller
         $user = $request->user();
 
         $this->validate($request, [
-            'title' => 'required|string|min:1|max:2048',
+            'title' => 'required|string|min:1|max:255',
             'query' => 'required|string|min:1|max:2048',
         ]);
 
@@ -84,7 +84,8 @@ class SearchesController extends Controller
                     'guid' => $request->user()->getId(),
                     'list' => $listName,
                     'title' => $request->get('title'),
-                    'query' => $request->get('query')
+                    'query' => $request->get('query'),
+                    'hash' => hash('sha512', $request->get('query')),
                 ],
                 [
                     // We need to format the date ourselves to add microseconds.
