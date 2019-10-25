@@ -205,6 +205,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
                 'list' => $list,
                 'title' => $search['title'],
                 'query' => $search['query'],
+                'hash' => hash('sha512', $search['query']),
                 'last_seen' => isset($search['last_seen']) ? Carbon::parse($search['last_seen']) : Carbon::now(),
                 'changed_at' => Carbon::now()->format('Y-m-d H:i:s.u'),
             ]);
