@@ -29,8 +29,8 @@ jobs:
     - name: Static code analysis
       uses: docker://php:7.3-alpine
       with:
-        entrypoint: vendor/bin/phpstan
-        args: analyse .
+        entrypoint: php
+        args: -d memory_limit=1G vendor/bin/phpstan analyse .
 
   unit_tests:
     name: Unit tests
