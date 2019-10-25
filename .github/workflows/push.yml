@@ -90,7 +90,7 @@ jobs:
     - name: Lint specification
       uses: docker://wework/speccy
       with:
-        args: lint follow-search.yaml
+        args: lint follow-searches.yaml
 
   specification_tests:
     name: Specification tests

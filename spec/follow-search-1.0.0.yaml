@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   version: '1.0.0'
-  title: 'Follow search'
+  title: 'Follow searches'
   license:
     name: 'GNU General Public License v3.0'
     url: 'https://www.gnu.org/licenses/gpl-3.0.html'
