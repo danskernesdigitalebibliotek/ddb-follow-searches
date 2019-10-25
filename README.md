@@ -128,7 +128,7 @@ To ensure the integrity and quality of the specification we lint it using
 
 To install Speccy, run `npm install --global speccy`
 
-To run Speccy, run `speccy lint follow-search.yaml`
+To run Speccy, run `speccy lint follow-searches.yaml`
 
 #### API specification test ####
 
