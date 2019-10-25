@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\SearchHandler;
+use App\Contracts\Searcher;
+use App\Events\ListCreated;
+use App\Events\ListRetrieved;
+use App\Events\SearchAdded;
+use App\Events\SearchChecked;
+use App\Events\SearchRemoved;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
@@ -15,23 +20,40 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class SearchesController extends Controller
 {
-    public function get(SearchHandler $searchHandler, string $listName)
+    public function get(Request $request, Searcher $searchHandler, string $listName)
     {
+        /* @var \Adgangsplatformen\Provider\AdgangsplatformenUser $user */
+        $user = $request->user();
+
+        $this->validate($request, [
+            'size' => 'integer|min:1',
+            'page' => 'integer|min:1',
+        ]);
+
         $this->checkList($listName);
+
         $searches = DB::table('searches')
             ->where('list', '=', $listName)
+            ->where('guid', '=', $user->getId())
+            ->when($request->query('size'), function ($query, $size) use ($request) {
+                $query->take($size);
+                $query->skip((intval($request->query('page', '1')) - 1) * $size);
+            })
             ->orderBy('changed_at', 'desc')
             ->get(['id', 'title', 'query', 'last_seen']);
 
         $counts = [];
-
         foreach ($searches as $search) {
-            $counts[$search->id] = ['query' => $search->query, 'last_seen' => $search->last_seen];
+            $counts[$search->id] = ['query' => $search->query, 'last_seen' => Carbon::parse($search->last_seen)];
         }
+
         $counts = $searchHandler->getCounts($counts);
         foreach ($searches as $search) {
             $search->hit_count = isset($counts[$search->id]) ? $counts[$search->id] : 0;
         }
+
+        event(new ListRetrieved($user, $listName));
+
         return $searches;
     }
 
@@ -47,8 +69,12 @@ class SearchesController extends Controller
     public function addSearch(Request $request, string $listName)
     {
         $this->checkList($listName);
+
+        /* @var \Adgangsplatformen\Provider\AdgangsplatformenUser $user */
+        $user = $request->user();
+
         $this->validate($request, [
-            'title' => 'required|string|min:1|max:2048',
+            'title' => 'required|string|min:1|max:255',
             'query' => 'required|string|min:1|max:2048',
         ]);
 
@@ -58,7 +84,8 @@ class SearchesController extends Controller
                     'guid' => $request->user()->getId(),
                     'list' => $listName,
                     'title' => $request->get('title'),
-                    'query' => $request->get('query')
+                    'query' => $request->get('query'),
+                    'hash' => hash('sha512', $request->get('query')),
                 ],
                 [
                     // We need to format the date ourselves to add microseconds.
@@ -67,41 +94,63 @@ class SearchesController extends Controller
                 ]
             );
 
+        if (DB::table('searches')->where('list', '=', $listName)->get(['*'])->count() == 1) {
+            event(new ListCreated($user, $listName));
+        }
+
+        event(new SearchAdded($user, $listName, DB::getPdo()->lastInsertId()));
+
         return new Response('', 201);
     }
 
-    public function getSearch(Request $request, SearchHandler $searchHandler, string $listName, string $searchId)
+    public function getSearch(Request $request, Searcher $searchHandler, string $listName, string $searchId)
     {
         $this->checkList($listName);
+
+        /* @var \Adgangsplatformen\Provider\AdgangsplatformenUser $user */
+        $user = $request->user();
+
         $search = DB::table('searches')
             ->where([
-                'guid' => $request->user()->getId(),
+                'guid' => $user->getId(),
                 'list' => $listName,
                 'id' => $searchId,
             ])
             ->first();
 
         if (!$search) {
-            throw new NotFoundHttpException('No such list');
+            throw new NotFoundHttpException('No such search');
         }
 
-        $materials = $searchHandler->getSearch($search->query, Carbon::createFromTimestamp($search->last_seen));
+        $materials = $searchHandler->getSearch($search->query, Carbon::parse($search->last_seen));
 
         DB::table('searches')
             ->where('id', $search->id)
             ->update(['last_seen' => Carbon::now()]);
+
+        event(new SearchChecked($user, $listName, $search->id));
+
         return ['materials' => $materials];
     }
 
     public function removeSearch(Request $request, string $listName, string $searchId)
     {
         $this->checkList($listName);
+
+        /* @var \Adgangsplatformen\Provider\AdgangsplatformenUser $user */
+        $user = $request->user();
+
         $count = DB::table('searches')
             ->where([
                 'guid' => $request->user()->getId(),
                 'list' => $listName,
                 'id' => $searchId,
             ])->delete();
+
+        if ($count > 0) {
+            event(new SearchRemoved($user, $listName, $searchId));
+        }
+
         return new Response('', $count > 0 ? 204 : 404);
     }
 

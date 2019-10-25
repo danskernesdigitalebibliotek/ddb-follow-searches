@@ -1,6 +1,6 @@
-[![](https://img.shields.io/codecov/c/github/reload/follow-search.svg?style=for-the-badge)](https://codecov.io/gh/reload/follow-search)
+[![](https://img.shields.io/codecov/c/github/reload/follow-searches.svg?style=for-the-badge)](https://codecov.io/gh/reload/follow-searches)
 
-![](https://github.com/reload/follow-search/workflows/Build,%20test%20and%20deploy/badge.svg)
+![](https://github.com/reload/follow-searches/workflows/Build,%20test%20and%20deploy/badge.svg)
 
 
 ## Installation ##
@@ -30,8 +30,8 @@ for branching.
 GitHub Actions runs tests and checks when new code is pushed.
 
 Pushes to `master` and `develop` deploys the version to the `prod` and
-`test` environments respectively. The deploys are also handle by
-GitHub Actions.
+`stage` environments respectively. The deploys are also handle by
+GitHub Actions and Envoy (see `Envoy.blade.php`).
 
 ### Achitecture overview ###
 
@@ -128,7 +128,7 @@ To ensure the integrity and quality of the specification we lint it using
 
 To install Speccy, run `npm install --global speccy`
 
-To run Speccy, run `speccy lint follow-search.yaml`
+To run Speccy, run `speccy lint follow-searches.yaml`
 
 #### API specification test ####
 
@@ -156,6 +156,11 @@ debugging), you need to run it in verbose mode: `dredd
 Unit tests are primarily used to test parts that are difficult to test
 by the previous methods, unexpected exception handling for instance.
 Run `./vendor/bin/phpunit` to run the test suite.
+
+## Server setup
+* In `~/public_html` there's a folder called `checkouts` which contains the code and the checkout is changed on deployment.
+* The folders `prod` and `stage` is a symlink to `./checkouts/prod/public` and `./checkouts/stage/public`.
+* Each environment in `checkouts` has a `.env` file with the specific settings for the environment.
 
 ## License
 

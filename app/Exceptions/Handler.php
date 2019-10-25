@@ -39,6 +39,10 @@ class Handler extends ExceptionHandler
             return $exception->getResponse();
         }
 
+        if ($exception instanceof ValidationException && $response = $exception->getResponse()) {
+            return $response;
+        }
+
         // Render HttpExceptions as plain text responses. And do it to all
         // exceptions in debug mode.
         if ($exception instanceof HttpException || env('APP_DEBUG')) {

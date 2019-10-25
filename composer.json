@@ -11,6 +11,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/reload/openplatform-client"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/reload/ddb-stats-laravel"
         }
     ],
     "require": {
@@ -18,7 +22,8 @@
         "danskernesdigitalebibliotek/oauth2-adgangsplatformen": "dev-master",
         "danskernesdigitalebibliotek/openplatform-client": "dev-master",
         "laravel/lumen-framework": "^6.0",
-        "softonic/laravel-psr15-bridge": "^1.1"
+        "softonic/laravel-psr15-bridge": "^1.1",
+        "danskernesdigitalebibliotek/ddb-stats-laravel": "dev-master"
     },
     "require-dev": {
         "behat/behat": "^3.5",

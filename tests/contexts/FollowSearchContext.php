@@ -1,6 +1,6 @@
 <?php
 
-use App\SearchHandler;
+use App\Contracts\Searcher;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
@@ -12,8 +12,8 @@ use Faker\Generator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Facade;
 use Laravel\Lumen\Testing\Concerns\MakesHttpRequests;
-use Prophecy\ObjectProphecy;
 use Prophecy\Argument;
+use Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
 
 // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
@@ -50,7 +50,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     /**
      * @var \Prophecy\ObjectProphecy
      */
-    protected $searchHandler;
+    protected $searcher;
 
     /**
      * Scenario state data.
@@ -99,14 +99,15 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
 
         $this->prophet = new Prophet();
 
-        // Create a SearchHandler mock.
-        $searchHandler = $this->prophet->prophesize(SearchHandler::class);
+        // Create a Searcher mock.
+        $searcher = $this->prophet->prophesize(Searcher::class);
         // Stub for those tests that don't care.
-        $searchHandler->getCounts(Argument::any())->willReturn([]);
-        $this->app->singleton(SearchHandler::class, function () use ($searchHandler) {
-            return $searchHandler->reveal();
+        $searcher->getCounts(Argument::any())->willReturn([]);
+        $searcher->getSearch(Argument::type('string'), Argument::type('\Illuminate\Support\Carbon'))->willReturn([]);
+        $this->app->singleton(Searcher::class, function () use ($searcher) {
+            return $searcher->reveal();
         });
-        $this->searchHandler = $searchHandler;
+        $this->searcher = $searcher;
     }
 
     /**
@@ -204,6 +205,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
                 'list' => $list,
                 'title' => $search['title'],
                 'query' => $search['query'],
+                'hash' => hash('sha512', $search['query']),
                 'last_seen' => isset($search['last_seen']) ? Carbon::parse($search['last_seen']) : Carbon::now(),
                 'changed_at' => Carbon::now()->format('Y-m-d H:i:s.u'),
             ]);
@@ -264,8 +266,15 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
      */
     public function theSystemShouldReturnNotFound()
     {
-        print($this->response->getContent());
         $this->checkStatusCode(404);
+    }
+
+    /**
+     * @Then the system should return validation error
+     */
+    public function theSystemShouldReturnValidationError()
+    {
+        $this->checkStatusCode(422);
     }
 
     /**
@@ -294,9 +303,20 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     /**
      * @When fetching :list searches
      */
-    public function fetchingSearchesNamed($list)
+    public function fetchingSearchesNamed($list, $page = null, $size = null)
     {
-        $this->get("/list/$list", $this->getHeaders());
+        $query = [];
+        if ($page) {
+            $query[] = 'page=' . $page;
+        }
+        if ($size) {
+            $query[] = 'size=' . $size;
+        }
+        $query = implode('&', $query);
+        if ($query) {
+            $query = '?' . $query;
+        }
+        $this->get("/list/$list" . $query, $this->getHeaders());
     }
 
     /**
@@ -363,7 +383,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
             ];
         }
 
-        $this->searchHandler->getCounts(Argument::any())->will(function ($args) use ($hitcounts) {
+        $this->searcher->getCounts(Argument::any())->will(function ($args) use ($hitcounts) {
             $res = [];
             foreach ($args[0] as $id => $search) {
                 $res[$id] = isset($hitcounts[$search['query']]['hitcount']) ?
@@ -375,7 +395,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
         });
 
         foreach ($hitcounts as $query => $hitcount) {
-            $this->searchHandler->getSearch($query, Argument::any())->will(function ($args) use ($hitcount) {
+            $this->searcher->getSearch($query, Argument::any())->will(function ($args) use ($hitcount) {
                 $res = [];
                 foreach ($hitcount['pids'] as $pid) {
                     $res[] = [
@@ -478,5 +498,165 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
                 var_export($expectedMaterials, true)
             ));
         }
+    }
+
+    /**
+     * @Given they have searches from A to Z on their search list
+     */
+    public function theyHaveSearchesFromAToZOnTheirSearchList()
+    {
+        // Create searches yesterday.
+        $time = Carbon::parse('yesterday');
+        Carbon::setTestNow($time);
+        foreach (range('A', 'Z') as $letter) {
+            $this->searchWithTitleIsAddedToTheSearches($letter, $letter);
+            $time->addSecond();
+        }
+    }
+
+    /**
+     * @When fetching the search list page :page, with a page size of :size
+     */
+    public function fetchingTheSearchListPageWithAPageSizeOf($page, $size)
+    {
+        $this->fetchingSearchesNamed('default', $page, $size);
+    }
+
+    /**
+     * @Then /^the search list should have searches (.*)$/
+     */
+    public function theSearchListShouldHaveSearches($searches)
+    {
+        $searches = explode(',', $searches);
+        $searches = array_filter(array_map('trim', $searches));
+
+        $response = $this->getSearchesResponse();
+        $index = 0;
+        $actualSearches = [];
+        foreach ($response as $search) {
+            $actualSearches[] = $search['title'];
+        }
+        if ($actualSearches != $searches) {
+            throw new Exception(sprintf(
+                'Searches "%s" does not match "%s"',
+                var_export($actualSearches, true),
+                var_export($searches, true)
+            ));
+        }
+    }
+
+    /**
+     * @Given a migrated search list for legacy user id :legacyId:
+     */
+    public function aMigratedListForOuid($legacyId, TableNode $table)
+    {
+        $columns = $table->getRow(0);
+        if (!in_array('title', $columns) || !in_array('query', $columns)) {
+            throw new Exception('Need at least "title" and "query" to create search');
+        }
+
+        $this->addToList('legacy-' . $legacyId, 'default', $table->getHash());
+    }
+    /**
+     * @When the user runs migrate for legacy user id :legacyId
+     */
+    public function theUserRunsMigrateWith($legacyId)
+    {
+        $this->put('/migrate/' . $legacyId, [], $this->getHeaders());
+    }
+
+/**
+     * @Then there should be a :eventName event for the user
+    */
+    public function anEventForTheUserTheListhouldExist($eventName)
+    {
+        $statistics = $this->claimStatistics();
+        $events = array_filter($statistics, function (array $event) use ($eventName) {
+            // Content is a subarray which does not work with array_intersect.
+            // Remove it as it is irrelevant for our comparison.
+            unset($event['content']);
+            $expectedEventVars = [
+                'guid' => $this->state['token'],
+                'event' => $eventName,
+            ];
+            return $expectedEventVars == array_intersect_assoc($event, $expectedEventVars);
+        });
+        if (empty($events)) {
+            throw new Exception("Expected statistics $eventName event not found");
+        }
+        $this->state['event'] = array_shift($events);
+    }
+
+    /**
+     * @Then there should be a :eventName event for the user and a search with the title :title
+     */
+    public function anEventForTheUserTheListAndTitleShouldExist($eventName, $title)
+    {
+        $statistics = $this->claimStatistics();
+        $events = array_filter($statistics, function (array $event) use ($eventName, $title) {
+            // Content is a subarray which does not work with array_intersect.
+            // Remove it as it is irrelevant for our comparison.
+            unset($event['content']);
+            $expectedEventVars = [
+                'guid' => $this->state['token'],
+                'event' => $eventName,
+                'itemId' => $this->getSearchIdFromTitle($title)
+            ];
+
+            return $expectedEventVars == array_intersect_assoc($event, $expectedEventVars);
+        });
+        if (empty($events)) {
+            throw new Exception("Expected statistics $eventName event for search title '$title' not found");
+        }
+        $this->state['event'] = array_shift($events);
+    }
+
+    /**
+     * @Then the total count of elements for the event should be :count
+     */
+    public function theEventTotalCountOfElementsShouldBe($count)
+    {
+        if ($this->state['event']['totalCount'] != $count) {
+            throw new Exception('Unexpected total count of elements: ' . $this->state['event']['totalCount']);
+        }
+    }
+
+    /**
+     * @Then the event elements should contain:
+     */
+    public function theEventElementsShouldContain(TableNode $table)
+    {
+        $elements = [
+            'event' => $table->getColumn(0),
+            'collectionId' => $table->getColumn(1),
+            'itemId' => $table->getColumn(2),
+        ];
+        $incorrect_values = [];
+        foreach ($elements as $key => $value) {
+            array_shift($value);
+            $correct_value = $this->state['event'][$key] === $value[0];
+            if (!$correct_value) {
+                $incorrect_values[$this->state['event'][$key]] = $value[0];
+            }
+        }
+        if (!empty($incorrect_values)) {
+            $exception_text = '';
+            foreach ($incorrect_values as $expected => $actual) {
+                $exception_text .= "Event is not the expected: \"$actual\" should be \"$expected\".\n";
+            }
+            throw new Exception($exception_text);
+        }
+    }
+
+    protected function claimStatistics(): array
+    {
+        $this->patch('/statistics', [], $this->getHeaders());
+        $statistics = json_decode($this->response->content(), true);
+        if ($statistics === null) {
+            throw new Exception('Unable to retrieve statistics. Invalid JSON: ' . json_last_error_msg());
+        } elseif (empty($statistics)) {
+            throw new Exception('No statistics returned');
+        }
+        return $statistics;
     }
 }

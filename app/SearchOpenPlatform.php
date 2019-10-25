@@ -2,10 +2,12 @@
 
 namespace App;
 
+use App\Contracts\Searcher;
 use DDB\OpenPlatform\OpenPlatform;
 use Illuminate\Support\Carbon;
+use Throwable;
 
-class SearchHandler
+class SearchOpenPlatform implements Searcher
 {
 
     /**
@@ -19,23 +21,15 @@ class SearchHandler
     }
 
     /**
-     * Return counts for searches.
-     *
-     * Collects the count of new materials for each query, since the last_seen
-     * date.
-     *
-     * @param array $searches
-     *   Array of <id> => ['query' => <string>, 'last_seen' => <Carbon>]
-     * @return array
-     *   Counts in <id> => <count> format.
+     * {@inheritdoc}
      */
-    public function getCounts($searches): array
+    public function getCounts(array $searches): array
     {
         $results = [];
         $responses = [];
         foreach ($searches as $id => $search) {
             $responses[$id] = $this->openplatform
-                ->search($this->getAccessionQuery($search['query'], $search['last_seen']))
+                ->search($this->getAccessionQuery($search['query'], Carbon::parse($search['last_seen'])))
                 // Limit result. We'd like to set this to 0, but OpenPlatform has
                 // a minimum of 1.
                 ->withLimit(1)
@@ -43,23 +37,19 @@ class SearchHandler
         }
 
         foreach ($responses as $id => $res) {
-            $results[$id] = $res->getHitCount();
+            try {
+                $results[$id] = $res->getHitCount();
+            } catch (Throwable $e) {
+                $results[$id] = 0;
+            }
         }
         return $results;
     }
 
     /**
-     * Return new materials for the given query, since the given last seen.
-     *
-     * @param string $query
-     *   The CQL query.
-     * @param Carbon $lastSeen
-     *   The last seen date.
-     *
-     * @return array
-     *   List of materials, each an array with at least a 'pid' key.
+     * {@inheritdoc}
      */
-    public function getSearch($query, Carbon $lastSeen): array
+    public function getSearch(string $query, Carbon $lastSeen): array
     {
         $result = [];
         $res = $this->openplatform
@@ -67,12 +57,15 @@ class SearchHandler
             ->withFields(['pid'])
             ->execute();
 
-        foreach ($res->getMaterials() as $material) {
-            $result[] = [
-                'pid' => $material['pid'],
-            ];
+        try {
+            foreach ($res->getMaterials() as $material) {
+                $result[] = [
+                    'pid' => $material['pid'],
+                ];
+            }
+        } catch (Throwable $e) {
+            return [];
         }
-
         return $result;
     }
 
