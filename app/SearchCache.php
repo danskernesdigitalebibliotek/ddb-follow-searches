@@ -62,6 +62,10 @@ class SearchCache implements Searcher
 
     public function cacheSet($key, $value)
     {
+        // Clean cache.
+        DB::table('cache')
+            ->where('timestamp', '>', Carbon::now()->subHours(6))
+            ->delete();
         DB::table('cache')->updateOrInsert(
             ['key' => $key],
             [
