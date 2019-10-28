@@ -52,7 +52,7 @@ class SearchCache implements Searcher
     {
         $cache = DB::table('cache')
             ->where('key', $key)
-            ->where('timestamp', '>', Carbon::parse('1 day ago'))
+            ->where('timestamp', '>', Carbon::now()->subHours(6))
             ->first();
         if ($cache) {
             return \unserialize($cache->data);
