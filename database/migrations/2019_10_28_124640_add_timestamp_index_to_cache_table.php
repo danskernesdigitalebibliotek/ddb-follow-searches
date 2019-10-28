@@ -26,7 +26,7 @@ class AddTimestampIndexToCacheTable extends Migration
     public function down()
     {
         Schema::table('cache', function (Blueprint $table) {
-            $table->dropIndex('timestamp');
+            $table->dropIndex(['timestamp']);
         });
     }
 }
