@@ -5,19 +5,23 @@ namespace App;
 use App\Contracts\Searcher;
 use DDB\OpenPlatform\OpenPlatform;
 use Illuminate\Support\Carbon;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 class SearchOpenPlatform implements Searcher
 {
+    use LoggerAwareTrait;
 
     /**
      * @var \DDB\OpenPlatform\OpenPlatform
      */
     protected $openplatform;
 
-    public function __construct(OpenPlatform $openplatform)
+    public function __construct(OpenPlatform $openplatform, LoggerInterface $logger)
     {
         $this->openplatform = $openplatform;
+        $this->logger = $logger;
     }
 
     /**
@@ -40,6 +44,7 @@ class SearchOpenPlatform implements Searcher
             try {
                 $results[$id] = $res->getHitCount();
             } catch (Throwable $e) {
+                $this->logger->error($e->getMessage());
                 $results[$id] = 0;
             }
         }
@@ -64,6 +69,7 @@ class SearchOpenPlatform implements Searcher
                 ];
             }
         } catch (Throwable $e) {
+            $this->logger->error($e->getMessage());
             return [];
         }
         return $result;
