@@ -13,7 +13,7 @@
   }
 @endsetup
 
-@task('deploy', ['on' => ['web']])
+@task('deploy', ['on' => ['web'], 'confirm' => true])
   cd {{ $dir }}
   git fetch
   git reset --hard origin/{{ $branch }}

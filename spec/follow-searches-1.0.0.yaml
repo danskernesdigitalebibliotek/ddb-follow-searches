@@ -63,7 +63,7 @@ paths:
 
   /list/{listName}/{searchId}:
     get:
-      operationId: checkListMaterial
+      operationId: getResultsForSearch
       tags:
         - Search
       description: 'Get the search results for a specific search.'
