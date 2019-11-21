@@ -1,6 +1,8 @@
-[![](https://img.shields.io/codecov/c/github/reload/follow-searches.svg?style=for-the-badge)](https://codecov.io/gh/reload/follow-searches)
+# Follow searches service for DDB
 
-![](https://github.com/reload/follow-searches/workflows/Build,%20test%20and%20deploy/badge.svg)
+[![](https://github.com/reload/follow-searches/workflows/Build,%20test,%20and%20deploy/badge.svg)](https://github.com/reload/follow-searches/actions?query=workflow%3A%22Build%2C+test%2C+and+deploy%22)
+[![](https://github.com/reload/follow-searches/workflows/Code%20style%20review/badge.svg)](https://github.com/reload/follow-searches/actions?query=workflow%3A%22Code+style+review%22)
+[![codecov](https://codecov.io/gh/reload/follow-searches/branch/master/graph/badge.svg)](https://codecov.io/gh/reload/follow-searches)
 
 
 ## Installation ##
