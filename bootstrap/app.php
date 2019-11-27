@@ -54,6 +54,11 @@ $app->singleton(
 | route or middleware that'll be assigned to some specific routes.
 |
 */
+$app->configure('cors');
+
+$app->middleware([
+    Spatie\Cors\Cors::class,
+]);
 
 // $app->routeMiddleware([
 //     'auth' => App\Http\Middleware\Authenticate::class,
@@ -71,6 +76,7 @@ $app->singleton(
 */
 
 $app->register(\Adgangsplatformen\Support\Illuminate\AdgangsplatformenServiceProvider::class);
+$app->register(\Spatie\Cors\CorsServiceProvider::class);
 $app->register(\App\Providers\AppServiceProvider::class);
 $app->register(\DDB\Stats\ServiceProviders\StatisticsServiceProvider::class);
 $app->register(\App\Providers\EventServiceProvider::class);
