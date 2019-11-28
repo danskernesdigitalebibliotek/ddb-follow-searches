@@ -65,8 +65,10 @@ class SearchCacheTest extends TestCase
         $searcher = $this->prophesize(SearchOpenPlatform::class);
         $cache = new SearchCache($searcher->reveal());
 
-        $searcher->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'))
+        $searcher->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'), [])
             ->willReturn([['pid' => '1'], ['pid' => '2']]);
+        $searcher->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'), ['title'])
+            ->willReturn([['pid' => 'pid 1', 'title' => 'title 1'], ['pid' => 'pid 2', 'title' => 'title 2']]);
 
         // Once...
         $this->assertEquals(
@@ -74,7 +76,7 @@ class SearchCacheTest extends TestCase
             $cache->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'))
         );
 
-        $searcher->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'))
+        $searcher->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'), [])
             ->shouldHaveBeenCalledTimes(1);
 
         // Twice...
@@ -83,7 +85,21 @@ class SearchCacheTest extends TestCase
             $cache->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'))
         );
 
-        $searcher->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'))
+        $searcher->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'), [])
+            ->shouldHaveBeenCalledTimes(1);
+
+        $searcher->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'), ['title'])
+            ->shouldHaveBeenCalledTimes(0);
+
+        // But other fields should result in a new hit on the backend.
+        $this->assertEquals(
+            [['pid' => 'pid 1', 'title' => 'title 1'], ['pid' => 'pid 2', 'title' => 'title 2']],
+            $cache->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'), ['title'])
+        );
+
+        $searcher->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'), [])
+            ->shouldHaveBeenCalledTimes(1);
+        $searcher->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'), ['title'])
             ->shouldHaveBeenCalledTimes(1);
     }
 }

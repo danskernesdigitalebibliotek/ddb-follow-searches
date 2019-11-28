@@ -54,19 +54,30 @@ class SearchOpenPlatform implements Searcher
     /**
      * {@inheritdoc}
      */
-    public function getSearch(string $query, Carbon $lastSeen): array
+    public function getSearch(string $query, Carbon $lastSeen, array $fields = []): array
     {
         $result = [];
+
         $res = $this->openplatform
             ->search($this->getAccessionQuery($query, $lastSeen))
-            ->withFields(['pid'])
+            ->withFields(array_merge(['pid'], $fields))
             ->execute();
 
         try {
             foreach ($res->getMaterials() as $material) {
-                $result[] = [
+                $resultRow = [
                     'pid' => $material['pid'],
                 ];
+
+                foreach ($fields as $field) {
+                    if (array_key_exists($field, $material)) {
+                        $resultRow[$field] = $material[$field];
+                    } else {
+                        $resultRow[$field] = null;
+                    }
+                }
+
+                $result[] = $resultRow;
             }
         } catch (Throwable $e) {
             $this->logger->error($e->getMessage());

@@ -103,7 +103,11 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
         $searcher = $this->prophet->prophesize(Searcher::class);
         // Stub for those tests that don't care.
         $searcher->getCounts(Argument::any())->willReturn([]);
-        $searcher->getSearch(Argument::type('string'), Argument::type('\Illuminate\Support\Carbon'))->willReturn([]);
+        $searcher->getSearch(
+            Argument::type('string'),
+            Argument::type('\Illuminate\Support\Carbon'),
+            Argument::any()
+        )->willReturn([]);
         $this->app->singleton(Searcher::class, function () use ($searcher) {
             return $searcher->reveal();
         });
@@ -338,7 +342,6 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
             'query' => $query,
         ], $this->getHeaders());
 
-        print_r($this->response->getContent());
         $this->checkStatusCode(201);
     }
 
@@ -395,7 +398,7 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
         });
 
         foreach ($hitcounts as $query => $hitcount) {
-            $this->searcher->getSearch($query, Argument::any())->will(function ($args) use ($hitcount) {
+            $this->searcher->getSearch($query, Argument::any(), [])->will(function ($args) use ($hitcount) {
                 $res = [];
                 foreach ($hitcount['pids'] as $pid) {
                     $res[] = [
@@ -406,6 +409,25 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
                 return $res;
             });
         }
+    }
+
+    /**
+     * @Given the :query query has the following results:
+     */
+    public function theQueryHasTheFollowingResults($query, TableNode $table)
+    {
+        $fields = $table->getRow(0);
+
+        if (!in_array('pid', $fields)) {
+            throw new Exception('Results needs at least a pid column');
+        }
+
+        // Remove pid from fields.
+        $fields = array_values(array_diff($fields, ['pid']));
+
+        $this->searcher->getSearch($query, Argument::any(), $fields)->will(function ($args) use ($table) {
+            return $table->getColumnsHash();
+        });
     }
 
     /**
@@ -473,6 +495,29 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     public function theyFetchTheSearch($title)
     {
         $this->get("/list/default/" . $this->getSearchIdFromTitle($title), $this->getHeaders());
+    }
+
+    /**
+     * @When they fetch the :title search with fields :fields
+     */
+    public function theyFetchTheSearchWithFields($title, $fields)
+    {
+        $fields = explode(',', $fields);
+        $fields = array_map(function ($field) {
+            return trim($field);
+        }, $fields);
+
+        // $this->get doesn't allow us to add query parameters, so we'll have
+        // to go through $this->call.
+        $server = $this->transformHeadersToServerVars($this->getHeaders());
+        $this->call(
+            'GET',
+            "/list/default/" . $this->getSearchIdFromTitle($title),
+            ['fields' => implode(',', $fields)],
+            [],
+            [],
+            $server
+        );
     }
 
     /**
