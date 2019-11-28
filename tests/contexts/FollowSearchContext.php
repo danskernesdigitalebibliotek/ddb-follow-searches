@@ -482,18 +482,11 @@ class FollowSearchContext implements Context, SnippetAcceptingContext
     {
         $response = $this->getSearchResponse();
         $actualMaterials = $response['materials'];
-        $expectedPids = $table->getColumn(0);
-        // Lose header.
-        array_shift($expectedPids);
-        $expectedMaterials = [];
-        foreach ($expectedPids as $pid) {
-            $expectedMaterials[] = [
-                'pid' => $pid,
-            ];
-        }
+        $expectedMaterials = $table->getColumnsHash();
+
         if ($actualMaterials != $expectedMaterials) {
             throw new Exception(sprintf(
-                'PIDs %s not equal %s',
+                'Response %s is not equal %s',
                 var_export($actualMaterials, true),
                 var_export($expectedMaterials, true)
             ));

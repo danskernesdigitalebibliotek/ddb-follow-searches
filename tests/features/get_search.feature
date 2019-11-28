@@ -13,7 +13,7 @@ Feature: Fetching search
     When they fetch the "Sightseeing" search
     Then the system should return success
     And the search result should be:
-      | pids |
+      | pid  |
       | one  |
       | two  |
       | three |
