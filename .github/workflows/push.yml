@@ -15,7 +15,7 @@ jobs:
         coverage: none
     - name: Install Dependencies
       run: |
-        composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+        composer install --no-ansi --no-interaction --no-suggest --no-progress --prefer-dist
     - name: Unit tests
       run: |
         phpdbg -qrr ./vendor/bin/phpunit --coverage-clover=coverage/unit.xml
@@ -38,7 +38,7 @@ jobs:
         coverage: none
     - name: Install Dependencies
       run: |
-        composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+        composer install --no-ansi --no-interaction --no-suggest --no-progress --prefer-dist
     - name: Behaviour tests
       run: |
         phpdbg -qrr vendor/bin/behat
@@ -75,7 +75,7 @@ jobs:
         coverage: none
     - name: Install Dependencies
       run: |
-        composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+        composer install --no-ansi --no-interaction --no-suggest --no-progress --prefer-dist
     - name: Install Dredd
       run: |
         npm install dredd --no-optional
