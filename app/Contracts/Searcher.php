@@ -26,9 +26,13 @@ interface Searcher
      *   The CQL query.
      * @param Carbon $lastSeen
      *   The last seen date.
+     * @param array<string> $fields
+     *   Materials fields to return in result.
+     *   See https://raw.githubusercontent.com/DBCDK/serviceprovider/master/doc/work-context.jsonld
+     *   for possibilities.
      *
      * @return array
      *   List of materials, each an array with at least a 'pid' key.
      */
-    public function getSearch(string $query, Carbon $lastSeen): array;
+    public function getSearch(string $query, Carbon $lastSeen, array $fields = []): array;
 }

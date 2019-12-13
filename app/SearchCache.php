@@ -19,6 +19,9 @@ class SearchCache implements Searcher
         $this->searchHandler = $searchHandler;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getCounts(array $searches): array
     {
         // We're using an "all or nothing" strategy for counts.
@@ -34,15 +37,18 @@ class SearchCache implements Searcher
         return $result;
     }
 
-    public function getSearch(string $query, Carbon $lastSeen): array
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearch(string $query, Carbon $lastSeen, array $fields = []): array
     {
-        $cacheKey = 'search-' . hash('sha1', $query . $lastSeen->format('c'));
+        $cacheKey = 'search-' . hash('sha1', $query . $lastSeen->format('c') . json_encode($fields));
         $cache = $this->cacheGet($cacheKey);
         if ($cache) {
             return $cache;
         }
 
-        $result = $this->searchHandler->getSearch($query, $lastSeen);
+        $result = $this->searchHandler->getSearch($query, $lastSeen, $fields);
         $this->cacheSet($cacheKey, $result);
 
         return $result;

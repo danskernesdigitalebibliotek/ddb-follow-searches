@@ -37,6 +37,11 @@ class SearchTestingTest extends TestCase
             $search->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'))
         );
 
+        $this->assertEquals(
+            [['pid' => 'pid 1', 'title' => 'title 1'], ['pid' => 'pid 2', 'title' => 'title 2']],
+            $search->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'), ['title'])
+        );
+
         $now->addDays(2);
 
         $this->assertEquals(
