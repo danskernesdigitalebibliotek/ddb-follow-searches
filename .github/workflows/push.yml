@@ -113,7 +113,7 @@ jobs:
         ssh-add ~/.ssh/id_rsa
         ssh-keyscan -p 222 followsearches.dandigbib.org > ~/.ssh/known_hosts
         if [ "$PROD" == "true" ]; then
-          ~/.composer/vendor/bin/envoy run deploy --env=prod
+          ~/.composer/vendor/bin/envoy run deploy --env=prod --no-ansi
         else
-          ~/.composer/vendor/bin/envoy run deploy --env=stage
+          ~/.composer/vendor/bin/envoy run deploy --env=stage --no-ansi
         fi
