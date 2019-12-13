@@ -70,6 +70,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/listName'
         - $ref: '#/components/parameters/searchId'
+        - $ref: '#/components/parameters/fields'
       responses:
         200:
           description: 'The search with the specified ID exists.'
