@@ -6,6 +6,12 @@ info:
     name: 'GNU General Public License v3.0'
     url: 'https://www.gnu.org/licenses/gpl-3.0.html'
 
+servers:
+  - url: https://prod.followsearches.dandigbib.org
+    description: Production server (uses live data)
+  - url: https://stage.followsearches.dandigbib.org
+    description: Staging server (contains test searches but uses live search results)
+
 tags:
   - name: 'Migrate'
     description: Data migration
