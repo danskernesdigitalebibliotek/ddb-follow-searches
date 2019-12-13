@@ -20,5 +20,5 @@
 
   php -dallow_url_fopen=1 ~/bin/composer self-update
   php -dallow_url_fopen=1 ~/bin/composer install --prefer-dist --no-dev
-  php ./artisan migrate
+  php ./artisan migrate --force
 @endtask
