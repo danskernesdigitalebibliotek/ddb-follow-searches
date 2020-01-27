@@ -32,3 +32,15 @@ Feature: Add to searches list
     And fetching searches should return:
       | title | query        | last_seen           |
       | Harry | harry potter | 2019-10-02 10:00:00 |
+
+  Scenario: Adding a query multiple times updates the title.
+    Given a known user
+    And they have the following items on the list:
+      | title | query        | last_seen           |
+      | Harry | harry potter | 2019-10-02 10:00:00 |
+    And the time is "2019-10-02 10:00"
+    When search "harry potter" with title "Wizards" is added to the list
+    Then the system should return success
+    And fetching searches should return:
+      | title   | query        | last_seen           |
+      | Wizards | harry potter | 2019-10-02 10:00:00 |
