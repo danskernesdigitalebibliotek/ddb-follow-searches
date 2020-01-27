@@ -21,7 +21,7 @@ Feature: Add to searches list
     Then the system should return success
     And search "terry pratchett" should be on the list with title "Terry"
 
-  Scenario: Materials should only be added once
+  Scenario: Searches should only be added once
     Given a known user
     And they have the following items on the list:
       | title | query        | last_seen           |
