@@ -82,12 +82,12 @@ class SearchesController extends Controller
             ->updateOrInsert(
                 [
                     'guid' => $request->user()->getId(),
-                    'list' => $listName,
-                    'title' => $request->get('title'),
-                    'query' => $request->get('query'),
                     'hash' => hash('sha512', $request->get('query')),
                 ],
                 [
+                    'list' => $listName,
+                    'title' => $request->get('title'),
+                    'query' => $request->get('query'),
                     // We need to format the date ourselves to add microseconds.
                     'changed_at' => Carbon::now()->format('Y-m-d H:i:s.u'),
                     'last_seen' => Carbon::now()
