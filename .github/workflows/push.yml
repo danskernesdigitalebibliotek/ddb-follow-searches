@@ -114,7 +114,7 @@ jobs:
         ssh-add ~/.ssh/id_rsa
         ssh-keyscan -p 222 followsearches.dandigbib.org > ~/.ssh/known_hosts
         if [ "$PROD" == "true" ]; then
-          vendor/bin/envoy run deploy --env=prod --no-ansi
+          vendor/bin/envoy run deploy --env=prod --no-ansi -vvv
         else
-          vendor/bin/envoy run deploy --env=stage --no-ansi
+          vendor/bin/envoy run deploy --env=stage --no-ansi -vvv
         fi
