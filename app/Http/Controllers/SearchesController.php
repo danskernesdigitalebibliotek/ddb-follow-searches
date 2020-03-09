@@ -82,12 +82,12 @@ class SearchesController extends Controller
             ->updateOrInsert(
                 [
                     'guid' => $request->user()->getId(),
-                    'list' => $listName,
-                    'title' => $request->get('title'),
-                    'query' => $request->get('query'),
                     'hash' => hash('sha512', $request->get('query')),
                 ],
                 [
+                    'list' => $listName,
+                    'title' => $request->get('title'),
+                    'query' => $request->get('query'),
                     // We need to format the date ourselves to add microseconds.
                     'changed_at' => Carbon::now()->format('Y-m-d H:i:s.u'),
                     'last_seen' => Carbon::now()
@@ -110,6 +110,8 @@ class SearchesController extends Controller
         /* @var \Adgangsplatformen\Provider\AdgangsplatformenUser $user */
         $user = $request->user();
 
+        $fields = [];
+
         $search = DB::table('searches')
             ->where([
                 'guid' => $user->getId(),
@@ -122,7 +124,17 @@ class SearchesController extends Controller
             throw new NotFoundHttpException('No such search');
         }
 
-        $materials = $searchHandler->getSearch($search->query, Carbon::parse($search->last_seen));
+        if ($request->has('fields')) {
+            // The OpenAPI spec defines the parameter as a comma separated
+            // list. OpenAPI defaults to using "id=1&id=2" for array types,
+            // but PHP expects "id[]=1&id[]=2". So rather than trying to hack
+            // around that, we use the other common option of using a single
+            // comma separated value and just split it up here. Looks nicer in
+            // the URL.
+            $fields = explode(',', $request->get('fields'));
+        }
+
+        $materials = $searchHandler->getSearch($search->query, Carbon::parse($search->last_seen), $fields);
 
         DB::table('searches')
             ->where('id', $search->id)

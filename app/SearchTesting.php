@@ -29,15 +29,21 @@ class SearchTesting implements Searcher
     /**
      * {@inheritdoc}
      */
-    public function getSearch(string $query, Carbon $lastSeen): array
+    public function getSearch(string $query, Carbon $lastSeen, array $fields = []): array
     {
         $result = [];
         $count = $lastSeen->diffInDays(Carbon::now());
 
         foreach (range(1, $count) as $index) {
-            $result[] = [
+            $resultRow= [
                 'pid' => 'pid ' . $index,
             ];
+
+            foreach ($fields as $field) {
+                $resultRow[$field] = $field . ' ' . $index;
+            }
+
+            $result[] = $resultRow;
         }
 
         return $result;

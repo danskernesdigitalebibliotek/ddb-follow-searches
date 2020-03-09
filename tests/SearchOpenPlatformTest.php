@@ -124,4 +124,57 @@ class SearchOpenPlatformTest extends TestCase
             1 => ['query' => 'query', 'last_seen' => Carbon::now()]
         ]);
     }
+
+    public function testGetSearchFieldFetching()
+    {
+        $logger = $this->prophesize(LoggerInterface::class);
+        $op = $this->prophesize(OpenPlatform::class);
+
+        $response = $this->prophesize(SearchResponse::class);
+        $response->getMaterials()
+            ->willReturn([
+                [
+                    'pid' => '1',
+                    // We shouldn't leak random data from the search result to
+                    // the client, so we'll add some there.
+                    'unexpected' => 'data',
+                    'title' => 'title 1',
+                    'cigar' => 'banana',
+                ],
+                [
+                    'pid' => '2',
+                    'title' => 'title 1',
+                    // No cigar.
+                ]
+            ]);
+        $response->getHitCount()
+            ->willReturn(2);
+
+        $search = $this->prophesize(SearchRequest::class);
+        $search->withFields(['pid', 'title', 'cigar'])
+            ->willReturn($search);
+        $search->execute()
+            ->willReturn($response);
+
+        $op->search('harry and facet.acsource=bibliotekskatalog and ' .
+                    'holdingsitem.accessiondate>2019-10-05T13:00:00Z')
+            ->willReturn($search);
+
+        $search = new SearchOpenPlatform($op->reveal(), $logger->reveal());
+
+        $res = $search->getSearch('harry', Carbon::parse('2019-10-05 13:00:00'), ['title', 'cigar']);
+
+        $this->assertEquals([
+            [
+                'pid' => '1',
+                'title' => 'title 1',
+                'cigar' => 'banana',
+            ],
+            [
+                'pid' => '2',
+                'title' => 'title 1',
+                'cigar' => null,
+            ]
+        ], $res);
+    }
 }
