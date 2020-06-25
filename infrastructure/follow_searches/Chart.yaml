@@ -1,0 +1,8 @@
+apiVersion: v2
+name: follow_searches
+description: DDB follow searches service
+
+type: application
+
+version: 0.1.0
+appVersion: 1.1.0
