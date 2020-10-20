@@ -214,7 +214,7 @@ data:
 The following command can be used to install the chart
 
 ```sh
-helm upgrade --install material-list infrastructure/follow_searches/ --set ingress.domain=prod.followsearches.dandigbib.org
+helm upgrade --install --namespace=follow-searches follow-searches infrastructure/follow_searches/ --set ingress.domain=prod.followsearches.dandigbib.org
 ```
 
 ## License
