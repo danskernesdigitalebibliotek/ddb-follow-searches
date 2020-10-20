@@ -153,6 +153,14 @@ Run `./vendor/bin/phpunit` to run the test suite.
 
 ## Deployment
 
+Create namespace with labels to allow traffic.
+
+```sh
+kubectl create namespace follow-searches
+kubectl label namespaces/ingress networking/namespace=ingress
+kubectl label namespaces/follow-searches networking/namespace=follow-searches
+```
+
 This repository comes with helm chats for deployment to kubernetes cluster in `infrastructure/follow_searches` which
 requires that you have a local `secrets.yml` file with the following content (sensitive information removed here) in
 the templates folder in the helm chart.
