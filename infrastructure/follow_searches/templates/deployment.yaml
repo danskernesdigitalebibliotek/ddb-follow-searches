@@ -21,7 +21,7 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       containers:
-      - name: material-list
+      - name: follow-searches
         image: danskernesdigitalebibliotek/follow-searches:{{ .Values.app.image.version }}
         resources:
           limits:
