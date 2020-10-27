@@ -161,58 +161,11 @@ kubectl label namespaces/ingress networking/namespace=ingress
 kubectl label namespaces/follow-searches networking/namespace=follow-searches
 ```
 
-This repository comes with helm chats for deployment to kubernetes cluster in `infrastructure/follow_searches` which
-requires that you have a local `secrets.yml` file with the following content (sensitive information removed here) in
-the templates folder in the helm chart.
-
-```yaml
-{{- if eq .Values.env "prod" }}
----
-apiVersion: v1
-kind: Secret
-metadata:
-  namespace: {{ .Release.Namespace }}
-  name: {{ .Release.Name }}-secret
-type: Opaque
-stringData:
-  APP_KEY: ''
-  APP_ADGANGSPLATFORMEN_CLIENT_ID: ''
-  APP_ADGANGSPLATFORMEN_CLIENT_SECRET: ''
-  APP_DB_USERNAME: ''
-  APP_DB_PASSWORD: ''
-{{- end }}
-
-{{- if eq .Values.env "stg" }}
----
-apiVersion: v1
-kind: Secret
-metadata:
-  namespace: {{ .Release.Namespace }}
-  name: {{ .Release.Name }}-secret
-type: Opaque
-stringData:
-  APP_KEY: ''
-  APP_ADGANGSPLATFORMEN_CLIENT_ID: ''
-  APP_ADGANGSPLATFORMEN_CLIENT_SECRET: ''
-  APP_DB_USERNAME: ''
-  APP_DB_PASSWORD: ''
-
-{{- if .Values.ingress.enableAuth }}
----
-apiVersion: v1
-kind: Secret
-metadata:
-  namespace: {{ .Release.Namespace }}
-  name: {{ .Release.Name }}-basic-auth
-type: Opaque
-data:
-  auth: ''
-{{- end }}
-{{- end }}
-```
+This repository comes with helm chats for deployment to kubernetes cluster in `infrastructure/material_list` which
+requires that you have a local `secrets.yml` in the templates folder. As this file contains sensitive information
+you can use the `secrects.example.yaml` file as a template for the required values.
 
 The following command can be used to install the chart
-
 ```sh
 helm upgrade --install --namespace=follow-searches follow-searches infrastructure/follow_searches/ --set ingress.domain=prod.followsearches.dandigbib.org
 ```
