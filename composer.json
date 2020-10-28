@@ -32,7 +32,6 @@
         "fzaninotto/faker": "^1.4",
         "guzzlehttp/guzzle": "^6.3",
         "jangregor/phpstan-prophecy": "^0.4.2",
-        "laravel/envoy": "^1.6",
         "matthiasnoback/behat-local-code-coverage-extension": "^0.3.0",
         "mockery/mockery": "^1.0",
         "nunomaduro/larastan": "^0.4.2",

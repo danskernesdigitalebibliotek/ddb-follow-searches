@@ -11,6 +11,7 @@ jobs:
       uses: shivammathur/setup-php@master
       with:
         php-version: 7.3
+        tools: composer:v1
         # We're using phpdbg, we don't need a coverage extension.
         coverage: none
     - name: Install Dependencies
@@ -35,6 +36,7 @@ jobs:
       uses: shivammathur/setup-php@master
       with:
         php-version: 7.3
+        tools: composer:v1
         coverage: none
     - name: Install Dependencies
       run: |
@@ -72,13 +74,14 @@ jobs:
       uses: shivammathur/setup-php@master
       with:
         php-version: 7.3
+        tools: composer:v1
         coverage: none
     - name: Install Dependencies
       run: |
         composer install --no-ansi --no-interaction --no-suggest --no-progress --prefer-dist
     - name: Install Dredd
       run: |
-        npm install dredd --no-optional
+        npm install dredd@12 --no-optional
     - name: Specification tests
       env:
         ADGANGSPLATFORMEN_DRIVER: testing
@@ -88,33 +91,3 @@ jobs:
         DB_DATABASE: /tmp/db.sqlite
       run: |
         node_modules/.bin/dredd --loglevel=error
-
-  deploy:
-    name: Deploy
-    if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop') && !github.event.deleted
-    needs:
-      - unit_tests
-      - behaviour_tests
-      - specification_lint
-      - specification_tests
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    - name: Install Dependencies
-      run: |
-        composer install --no-ansi --no-interaction --no-suggest --no-progress --prefer-dist
-    - name: Deployment to server
-      env:
-        SSH_KEY: ${{ secrets.SSH_KEY }}
-        PROD: ${{ (github.ref == 'refs/heads/master') }}
-      run: |
-        mkdir -p ~/.ssh && echo "${SSH_KEY}" >> ~/.ssh/id_rsa
-        chmod 400 ~/.ssh/id_rsa
-        eval "$(ssh-agent -s)"
-        ssh-add ~/.ssh/id_rsa
-        ssh-keyscan -p 222 followsearches.dandigbib.org > ~/.ssh/known_hosts
-        if [ "$PROD" == "true" ]; then
-          vendor/bin/envoy run deploy --env=prod --no-ansi -vvv
-        else
-          vendor/bin/envoy run deploy --env=stage --no-ansi -vvv
-        fi
