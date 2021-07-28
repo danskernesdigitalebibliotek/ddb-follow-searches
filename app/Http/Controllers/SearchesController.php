@@ -78,6 +78,11 @@ class SearchesController extends Controller
             'query' => 'required|string|min:1|max:2048',
         ]);
 
+        $existingCount = DB::table('searches')->where([
+            'guid' => $user->getId(),
+            'list' => $listName,
+        ])->count();
+
         DB::table('searches')
             ->updateOrInsert(
                 [
@@ -94,11 +99,22 @@ class SearchesController extends Controller
                 ]
             );
 
-        if (DB::table('searches')->where('list', '=', $listName)->get(['*'])->count() == 1) {
-            event(new ListCreated($user, $listName));
-        }
+        // We have to check the new count to determine whether we added or
+        // updated an entry.
+        $newCount = DB::table('searches')->where([
+            'guid' => $user->getId(),
+            'list' => $listName,
+        ])->count();
 
-        event(new SearchAdded($user, $listName, DB::getPdo()->lastInsertId()));
+        if ($newCount > $existingCount) {
+            // If there was no items on the list before, we have created a new
+            // one.
+            if ($existingCount < 1) {
+                event(new ListCreated($user, $listName));
+            }
+
+            event(new SearchAdded($user, $listName, DB::getPdo()->lastInsertId()));
+        }
 
         return new Response('', 201);
     }
