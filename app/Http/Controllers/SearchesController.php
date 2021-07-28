@@ -78,6 +78,11 @@ class SearchesController extends Controller
             'query' => 'required|string|min:1|max:2048',
         ]);
 
+        $listExists = DB::table('searches')->where([
+            'guid' => $user->getId(),
+            'list' => $listName,
+        ])->count() > 0;
+
         DB::table('searches')
             ->updateOrInsert(
                 [
@@ -94,7 +99,7 @@ class SearchesController extends Controller
                 ]
             );
 
-        if (DB::table('searches')->where('list', '=', $listName)->get(['*'])->count() == 1) {
+        if (!$listExists) {
             event(new ListCreated($user, $listName));
         }
 
