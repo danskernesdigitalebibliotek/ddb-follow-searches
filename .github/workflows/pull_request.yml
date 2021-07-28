@@ -51,9 +51,11 @@ jobs:
     name: Helm chart validation
     runs-on: ubuntu-latest
     steps:
-      - uses: azure/setup-helm@v1
-        name: Install helm
-        with:
-          version: v3.3.4
-      - name: Lint helm
-          run: helm lint infrastructure/follow_searches --namespace=follow-searches --set hpa.enabled=true --set ingress.enableTLS=true --set ingress.mail=test@example.com --set ingress.domain=prod.followsearches.dandigbib.org
+    - uses: actions/checkout@master
+    - uses: azure/setup-helm@v1
+      name: Install helm
+      with:
+        version: v3.3.4
+    - name: Lint helm
+      run: |
+        helm lint infrastructure/follow_searches --namespace=follow-searches --set hpa.enabled=true --set ingress.enableTLS=true --set ingress.mail=test@example.com --set ingress.domain=prod.followsearches.dandigbib.org
