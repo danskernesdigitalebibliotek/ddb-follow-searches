@@ -18,29 +18,28 @@
         }
     ],
     "require": {
-        "php": "^7.2",
         "composer/package-versions-deprecated": "^1.11",
-        "danskernesdigitalebibliotek/ddb-stats-laravel": "^1.0",
+        "danskernesdigitalebibliotek/ddb-stats-laravel": "^1.1",
         "danskernesdigitalebibliotek/oauth2-adgangsplatformen": "^1.0",
-        "danskernesdigitalebibliotek/openplatform-client": "^1.0",
-        "laravel/lumen-framework": "^6.0",
-        "softonic/laravel-psr15-bridge": "^1.1",
-        "spatie/laravel-cors": "^1.6"
+        "danskernesdigitalebibliotek/openplatform-client": "^1.1",
+        "fruitcake/laravel-cors": "^2.0",
+        "laravel/lumen-framework": "^8.0",
+        "softonic/laravel-psr15-bridge": "^2.0"
     },
     "require-dev": {
         "behat/behat": "^3.5",
         "ddelnano/dredd-hooks-php": "^1.1",
         "fzaninotto/faker": "^1.4",
         "guzzlehttp/guzzle": "^6.3",
-        "jangregor/phpstan-prophecy": "^0.4.2",
-        "matthiasnoback/behat-local-code-coverage-extension": "^0.3.0",
+        "jangregor/phpstan-prophecy": "^1.0",
+        "matthiasnoback/behat-local-code-coverage-extension": "^0.5.0",
         "mockery/mockery": "^1.0",
-        "nunomaduro/larastan": "^0.4.2",
+        "nunomaduro/larastan": "^1.0.3",
         "phpstan/extension-installer": "^1.0",
-        "phpstan/phpstan": "^0.11.12",
-        "phpstan/phpstan-symfony": "^0.11.6",
-        "phpunit/phpcov": "^5.0",
-        "phpunit/phpunit": "^7.0",
+        "phpstan/phpstan": "^1.0",
+        "phpstan/phpstan-symfony": "^1.0",
+        "phpunit/phpcov": "^7.0",
+        "phpunit/phpunit": "^9.0",
         "squizlabs/php_codesniffer": "^3.4"
     },
     "autoload": {
@@ -65,7 +64,10 @@
     "config": {
         "preferred-install": "dist",
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

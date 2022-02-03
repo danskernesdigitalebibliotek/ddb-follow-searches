@@ -1,6 +1,6 @@
 parameters:
     level: max
-    excludes_analyse:
+    excludePaths:
         - vendor
         - database/migrations
     ignoreErrors:
