@@ -19,9 +19,9 @@
     ],
     "require": {
         "composer/package-versions-deprecated": "^1.11",
-        "danskernesdigitalebibliotek/ddb-stats-laravel": "dev-upgrading-to-lumen-8",
+        "danskernesdigitalebibliotek/ddb-stats-laravel": "^1.1",
         "danskernesdigitalebibliotek/oauth2-adgangsplatformen": "^1.0",
-        "danskernesdigitalebibliotek/openplatform-client": "dev-upgrading-to-lumen-8",
+        "danskernesdigitalebibliotek/openplatform-client": "^1.1",
         "fruitcake/laravel-cors": "^2.0",
         "laravel/lumen-framework": "^8.0",
         "softonic/laravel-psr15-bridge": "^2.0"

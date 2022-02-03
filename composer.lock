@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "db9edd63aca346cd9063f23db8b5daa2",
+    "content-hash": "1109ab6bc4548339ef0720f4f0d395a1",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -197,25 +197,25 @@
         },
         {
             "name": "danskernesdigitalebibliotek/ddb-stats-laravel",
-            "version": "dev-upgrading-to-lumen-8",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reload/ddb-stats-laravel.git",
-                "reference": "5679218b573994aa41a09036990fcf1c01a17bbf"
+                "reference": "b8cd694677a4397f6802b3791d274efda36bcf04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reload/ddb-stats-laravel/zipball/5679218b573994aa41a09036990fcf1c01a17bbf",
-                "reference": "5679218b573994aa41a09036990fcf1c01a17bbf",
+                "url": "https://api.github.com/repos/reload/ddb-stats-laravel/zipball/b8cd694677a4397f6802b3791d274efda36bcf04",
+                "reference": "b8cd694677a4397f6802b3791d274efda36bcf04",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
+                "laravel/lumen-framework": "^8.0",
                 "php": "^7.2"
             },
             "require-dev": {
                 "jangregor/phpstan-prophecy": "^1.0",
-                "laravel/lumen-framework": "^8.0",
                 "nunomaduro/larastan": "^1.0.0",
                 "orchestra/testbench": "^6.7",
                 "phpstan/extension-installer": "^1.0",
@@ -248,10 +248,10 @@
             ],
             "description": "Common stats collecting framework for Lumen based DDB microservices",
             "support": {
-                "source": "https://github.com/reload/ddb-stats-laravel/tree/upgrading-to-lumen-8",
+                "source": "https://github.com/reload/ddb-stats-laravel/tree/1.1.0",
                 "issues": "https://github.com/reload/ddb-stats-laravel/issues"
             },
-            "time": "2022-02-02T18:13:51+00:00"
+            "time": "2022-02-03T10:35:17+00:00"
         },
         {
             "name": "danskernesdigitalebibliotek/oauth2-adgangsplatformen",
@@ -321,16 +321,16 @@
         },
         {
             "name": "danskernesdigitalebibliotek/openplatform-client",
-            "version": "dev-upgrading-to-lumen-8",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reload/openplatform-client.git",
-                "reference": "f266b90d66cb022e3f1b2a013e867664157cddff"
+                "reference": "e845d7fad0c30cf356f51eff942c2661b03e2329"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reload/openplatform-client/zipball/f266b90d66cb022e3f1b2a013e867664157cddff",
-                "reference": "f266b90d66cb022e3f1b2a013e867664157cddff",
+                "url": "https://api.github.com/repos/reload/openplatform-client/zipball/e845d7fad0c30cf356f51eff942c2661b03e2329",
+                "reference": "e845d7fad0c30cf356f51eff942c2661b03e2329",
                 "shasum": ""
             },
             "require": {
@@ -361,10 +361,10 @@
             ],
             "description": "Client for the Open Platform service for the danish libraries",
             "support": {
-                "source": "https://github.com/reload/openplatform-client/tree/upgrading-to-lumen-8",
+                "source": "https://github.com/reload/openplatform-client/tree/1.1.0",
                 "issues": "https://github.com/reload/openplatform-client/issues"
             },
-            "time": "2022-02-02T09:26:53+00:00"
+            "time": "2022-02-03T10:32:41+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -1326,12 +1326,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Illuminate\\Support\\": ""
-                },
                 "files": [
                     "helpers.php"
-                ]
+                ],
+                "psr-4": {
+                    "Illuminate\\Support\\": ""
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -2258,12 +2258,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Illuminate\\Support\\": ""
-                },
                 "files": [
                     "helpers.php"
-                ]
+                ],
+                "psr-4": {
+                    "Illuminate\\Support\\": ""
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -2980,16 +2980,16 @@
         },
         {
             "name": "nyholm/psr7",
-            "version": "1.4.1",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nyholm/psr7.git",
-                "reference": "2212385b47153ea71b1c1b1374f8cb5e4f7892ec"
+                "reference": "1461e07a0f2a975a52082ca3b769ca912b816226"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/2212385b47153ea71b1c1b1374f8cb5e4f7892ec",
-                "reference": "2212385b47153ea71b1c1b1374f8cb5e4f7892ec",
+                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/1461e07a0f2a975a52082ca3b769ca912b816226",
+                "reference": "1461e07a0f2a975a52082ca3b769ca912b816226",
                 "shasum": ""
             },
             "require": {
@@ -3041,7 +3041,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Nyholm/psr7/issues",
-                "source": "https://github.com/Nyholm/psr7/tree/1.4.1"
+                "source": "https://github.com/Nyholm/psr7/tree/1.5.0"
             },
             "funding": [
                 {
@@ -3053,7 +3053,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-07-02T08:32:20+00:00"
+            "time": "2022-02-02T18:37:57+00:00"
         },
         {
             "name": "opis/closure",
@@ -8199,16 +8199,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.4.4",
+            "version": "1.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "f7409da1e26c6dee172cce744034b869a2f27a9e"
+                "reference": "150d1fbd82fb71ff76b3bd7f6ea6006d89c5f0c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f7409da1e26c6dee172cce744034b869a2f27a9e",
-                "reference": "f7409da1e26c6dee172cce744034b869a2f27a9e",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/150d1fbd82fb71ff76b3bd7f6ea6006d89c5f0c3",
+                "reference": "150d1fbd82fb71ff76b3bd7f6ea6006d89c5f0c3",
                 "shasum": ""
             },
             "require": {
@@ -8239,7 +8239,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/1.4.4"
+                "source": "https://github.com/phpstan/phpstan/tree/1.4.5"
             },
             "funding": [
                 {
@@ -8259,7 +8259,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-01-31T16:50:49+00:00"
+            "time": "2022-02-02T19:35:10+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -10335,10 +10335,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "danskernesdigitalebibliotek/ddb-stats-laravel": 20,
-        "danskernesdigitalebibliotek/openplatform-client": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],
