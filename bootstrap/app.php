@@ -57,7 +57,7 @@ $app->singleton(
 $app->configure('cors');
 
 $app->middleware([
-    Spatie\Cors\Cors::class,
+    Fruitcake\Cors\HandleCors::class,
 ]);
 
 // $app->routeMiddleware([
@@ -76,7 +76,7 @@ $app->middleware([
 */
 
 $app->register(\Adgangsplatformen\Support\Illuminate\AdgangsplatformenServiceProvider::class);
-$app->register(\Spatie\Cors\CorsServiceProvider::class);
+$app->register(Fruitcake\Cors\CorsServiceProvider::class);
 $app->register(\App\Providers\AppServiceProvider::class);
 $app->register(\DDB\Stats\ServiceProviders\StatisticsServiceProvider::class);
 $app->register(\App\Providers\EventServiceProvider::class);

@@ -107,7 +107,9 @@ class SearchOpenPlatformTest extends TestCase
 
         $response = $this->prophesize(SearchResponse::class);
         $response->getMaterials()
-            ->willThrow(new RequestError('Error message'));
+            ->willThrow(new RequestError('Materials error'));
+        $response->getHitCount()
+            ->willThrow(new RequestError('Hit count error'));
 
         $search = $this->prophesize(SearchRequest::class);
         $search->withFields(Argument::any())->willReturn($search);

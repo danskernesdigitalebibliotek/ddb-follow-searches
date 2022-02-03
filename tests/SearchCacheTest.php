@@ -38,7 +38,7 @@ class SearchCacheTest extends TestCase
         $searcher = $this->prophesize(SearchOpenPlatform::class);
         $cache = new SearchCache($searcher->reveal());
 
-        $searches = [2 => ['query' => 'test', 'last_seen' => Carbon::parse('2019-10-02 10:00:00')]];
+        $searches = [2 => ['query' => 'test', 'last_seen' => (string) Carbon::parse('2019-10-02 10:00:00')]];
         $expected = [2 => 4];
         $searcher->getCounts($searches)
             ->willReturn($expected);
