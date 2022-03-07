@@ -22,7 +22,7 @@ app:
     version: "latest"
     imagePullPolicy: "IfNotPresent"
   db:
-    host: 'follow-searches-database.mariadb.database.azure.com'
+    host: 'k8s-ddf-prod.mariadb.database.azure.com'
     port: '3306'
     database: 'follow-searches'
     ssl: true
