@@ -3,9 +3,12 @@
 namespace App;
 
 use Laravel\Lumen\Testing\TestCase as BaseTestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 abstract class TestCase extends BaseTestCase
 {
+    use ProphecyTrait;
+
     /**
      * Creates the application.
      *
