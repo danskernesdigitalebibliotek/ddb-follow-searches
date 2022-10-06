@@ -5,7 +5,7 @@
 server {
     listen 8080;
     server_name localhost;
-     {{ getenv "APP_PATH" "/var/www/html" }}/public;
+    root {{ getenv "APP_PATH" "/var/www/html" }}/public;
 
     disable_symlinks off;
 
@@ -77,7 +77,7 @@ server {
 server {
     listen 8081;
     server_name localhost;
-     {{ getenv "APP_PATH" "/var/www/html" }}/public;
+    root {{ getenv "APP_PATH" "/var/www/html" }}/public;
 
     error_log off;
     access_log off;
