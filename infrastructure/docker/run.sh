@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 APP_VERSION=develop
 VERSION=latest
 
